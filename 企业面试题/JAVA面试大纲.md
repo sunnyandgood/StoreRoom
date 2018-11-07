@@ -1,5 +1,8 @@
 <h1 align="center">JAVA面试大纲</h1>
 
+* [参考答案](https://blog.csdn.net/weixin_37509652/article/details/79701679)
+* [内容学习](http://cmsblogs.com/)
+
 ## 一、项目介绍
 
 1、明确项目是做什么的 
