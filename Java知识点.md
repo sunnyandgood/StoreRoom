@@ -801,6 +801,74 @@ public class LinkedHashMap<K,V>
 * volatile使变量在线程间可见，而synchronized是使多个线程间资源同步；
 * volatile修饰变量，而synchronized修饰方法或代码块。
 
+### 60.如果main方法被声明为private会怎样？(java核心卷3.1节)
+
+* 这种做法是错误的：
+	* 根据 Java语言规范，main方法必须声明为 public( Java语言规范是描述 Java语言的官方文档。)
+
+    <div align="center"><img src="./img/010.png"/></div>
+
+* 不过，当 main 方法不是public时，有些版本的 Java解释器也可以执行 Java应用程序。在 JavaSE 1.4及以后的版本中强制 main方法是 public的。
+
+### 61.&和&&的区别在哪里？
+
+* & 是位运算的与操作；
+* && 的逻辑判断的与操作，的短路运算（如果前边的运算能够得出这个逻辑运算的解，那么后边的运算就不会执行）。
+
+```java
+public class Demo1 {
+    public static void main(String[] args){
+    	//&（与）：位运算，按二进制位进行运算
+    	/**
+    	 *  0101->5
+    	 *  0100->4
+    	 * ------
+    	 *  0100
+    	 */
+        System.out.println(5 & 4);//4
+
+        //&&（与）和||（或）都是短路运算
+        System.out.println(false && (20 > 10));//false
+
+        System.out.println(true || (1 < 0.5));//true
+    }
+}
+```
+
+
+### 62.char类型变量能不能存储一个中文汉字？
+
+* 一个中文字符占2个字节；char类型也是两个字节的；所以**char类型变量可以存储一个中文汉字**。
+
+   <div align="center"><img src="./img/011.png"/></div>
+
+   <div align="center"><img src="./img/002.png"/></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
