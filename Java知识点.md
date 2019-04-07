@@ -845,10 +845,119 @@ public class Demo1 {
    <div align="center"><img src="./img/002.png"/></div>
 
 
+### 63.++a 和 a++ 的区别
+
+* 都是一元运算符，只有一个操作数
+* ++在前：先自加后运算
+* ++在后：先运算后自加
+
+   <div align="center"><img src="./img/012.png"/></div>
 
 
+### 64.`a+=b` 与 `a=a+b` 的区别
+* **数字类型的常量在Java里面默认是int类型**；
+* **byte、short类型的数相加，都会向上类型转换为int类型**；
+* `a+=b` 的 `+=` 与 `=` 一样，是赋值运算符；
+* `a=a+b` 的 `a+b` 在执行过程中会将short类型的a向上转型为int类型，因此运算后的值是int类型，再将int类型的值赋给short类型的变量，由于类型不匹配，所以导致编译错误。
 
 
+   <div align="center"><img src="./img/013.png"/></div>
+
+### 65.浮点数运算为什么会有精度丢失？该怎么解决精度丢失问题？
+* 由于计算机执行运算都是用二进制进行计算的，所以在计算过程中，会将十进制数转换为二进制数再计算，在转换过程中就有可能导致精度丢失。
+* 用**BigDecimal 类**代替浮点数进行计算。
+
+### 66.在不使用第三变量交换两个变量的值
+
+* 方法一：
+  ```java
+  public class Demo1 {
+    public static void main(String[] args){
+    	int a = 10;
+    	int b = 20;
+    	a = a + b;
+    	b = a - b;
+    	a = a - b;
+        System.out.println("a=" + a);//a=20
+        System.out.println("b=" + b);//b=10
+    }
+  }
+  ```
+
+* 方法二：
+  ```java
+  public class Demo1 {
+    public static void main(String[] args){
+    	int a = 10;
+    	int b = 20;
+    	a = a * b;
+    	b = a / b;
+    	a = a / b;
+        System.out.println("a=" + a);//a=20
+        System.out.println("b=" + b);//b=10
+    }
+  }
+  ```
+
+* 方法三：
+  ```java
+  public class Demo1 {
+    public static void main(String[] args){
+    	int a = 10;
+    	int b = 20;
+    	a = b + (b = a)*0;
+        System.out.println("a=" + a);//a=20
+        System.out.println("b=" + b);//b=10
+    }
+  }
+  ```
+
+### 67.在JAVA中如何跳出当前的多重循环？
+
+* break只能跳出当前层循环；
+
+```java
+public class Demo1 {
+    public static void main(String[] args){
+    	//break只能跳出当前层循环
+    	mark:
+        for (int i=0; i<10; i++ ) {
+        	for (int j=0; j<10; j++) {
+        		if (i==9) {
+        			break mark;
+        		}
+        	}
+        }
+    }
+}
+```
+
+### 68.`String s = new String("xyz");`创建了几个String Object？
+
+* 可以说一个也可以说两个。
+
+   <div align="center"><img src="./img/014.png"/></div>
+
+* 拓展 
+  ```java
+  public class Demo1 {
+    public static void main(String[] args){
+        String s1 = new String("xyz");//创建了2个对象
+        String s2 = "xyz";//创建了0个对象
+        String s3 = "xyz";//创建了0个对象
+        String s4 = s2;//创建了0个对象
+        String s5 = new String("xyz");//创建了1个对象
+
+        System.out.println(s2 == "xyz");//true
+        System.out.println(s2 == s3);//true
+        System.out.println(s2 == s4);//true
+        System.out.println(s1 == s5);//false
+        System.out.println(s1 == s2);//false
+        System.out.println(s1 == "xyz");//false
+    }
+  }
+  ```
+   <div align="center"><img src="./img/015.png"/></div>
 
 
 
