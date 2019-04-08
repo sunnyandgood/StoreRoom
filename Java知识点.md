@@ -145,10 +145,15 @@
 	* 所谓多态就是指程序中定义的引用变量所指向的具体类型和通过该引用变量发出的方法调用在编程时并不确定，而是在程序运行期间才确定，即一个引用变量到底会指向哪个类的实例对象，该引用变量发出的方法调用到底是哪个类中实现的方法，必须在由程序运行期间才能决定。
 	* 在Java中有两种形式可以实现多态：继承（多个子类对同一方法的重写）和接口（实现接口并覆盖接口中同一方法）。
 
-### 12.String StringBuffer 和 StringBuilder 的区别是什么 String 为什么是不可变的
+### 12.String、StringBuffer 和 StringBuilder 的区别是什么？ String 为什么是不可变的？
+
+* String 为什么是final的？
+	* String类用final修饰是为了保证线程安全，很多情况下存储密码、ip......所以得用final修饰设置为不可变的。（保证呗修饰的属性是安全的）
+	* 为了字符串池更好的存储字符串
+* StringBuffer 和 StringBuilder 默认大小是 16。
 
 * 可变性　
-	* 简单的来说：String 类中使用 final 关键字字符数组保存字符串,`private final char[] value`，所以 String 对象是**不可变**的。
+	* 简单的来说：String 类中使用 final 关键字修饰保存字符串的字符数组,`private final char[] value`，所以 String 对象是**不可变**的。
 	* 而StringBuilder 与 StringBuffer 都继承自 AbstractStringBuilder 类，在 AbstractStringBuilder 中也是使用字符数组保存字符串 `char[] value` 但是没有用 final 关键字修饰，所以这两种对象都是**可变**的。
 	* StringBuilder 与 StringBuffer 的构造方法都是调用父类构造方法也就是 AbstractStringBuilder 实现的，大家可以自行查阅源码。
 	  ```java
@@ -197,14 +202,40 @@
 
 ### 13.Java支持的基本数据类型有哪些？什么是自动拆装箱？
 * java支持的基本数据类型有以下9种:byte,shot,int,long,float,double,char,boolean,void.
-* 自动拆装箱是java从jdk1.5引用，目的是将原始类型自动的装换为相对应的对象，也可以逆向进行，即拆箱。这也体现java中一切皆对象的宗旨。
+* 自动拆装箱是java从jdk1.5引用，目的是将原始类型自动的装换为相对应的对象，也可以逆向进行，即拆箱。这也**体现java中一切皆对象的宗旨**。
 * 所谓自动装箱就是将原始类型自动的转换为对应的对象，而拆箱就是将对象类型转换为基本类型。java中的自动拆装箱通常发生在变量赋值的过程中，
 * **装箱**：将基本类型用它们对应的引用类型包装起来；
 * **拆箱**：将包装类型转换为基本数据类型；
 
   ```java
-  Integer object = 3; //自动装箱
-  int o = object; //拆箱
+  int val = 6
+  Integer object = val; //自动装箱
+  int o = object; //自动拆箱
+  ```
+
+* 在使用包装类过程中需要比较大小时，最好使用equals方法。因为`==`只能正确判断`-128~127`之间的值。
+  ```java
+  //语法糖
+  /** 
+   * Cache to support the object identity semantics of autoboxing for 
+   * values between -128 and 127 (inclusive) as required by JLS.
+   * 缓存以支持jls要求的值在-128和127（包括）之间的自动修改的对象标识语义。
+   */
+  Integer a = -129;
+  Integer b = -129;
+  System.out.println(a==b);//false
+
+  Integer c = -128;
+  Integer d = -128;
+  System.out.println(c==d);//true
+
+  Integer e = 127;
+  Integer f = 127;
+  System.out.println(e==f);//true
+
+  Integer g = 128;
+  Integer h = 128;
+  System.out.println(g==h);//false
   ```
 * 在java中，应该注意自动拆装箱，因为有时可能因为java自动装箱机制，而导致创建了许多对象，对于内存小的平台会造成压力。
 
@@ -231,7 +262,9 @@
 ## 17.接口和抽象类的区别是什么
 * 接口的方法**默认是 public**，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），抽象类可以有非抽象的方法,抽象类的成员函数可以是 private，protected 或者是 public 。
 * 接口中的实例变量**默认是 final 类型**的，而抽象类中则不一定,抽象类可以包含非 final 的变量。
-* 接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象 从设计层面来说，抽象是对类的抽象，是一种**模板设计**，接口是行为的抽象，是一种**行为的规范**。
+* 接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象（或者用内部类实现）；从设计层面来说：
+	* 抽象是对类的抽象，是一种**模板设计**，
+	* 接口是行为的抽象，是一种**行为的规范**。
 * 接口中所有的方法隐含的都是抽象的。而抽象类则可以同时包含抽象和非抽象的方法。
 * 一个类可以实现多个接口，但最多只能实现一个抽象类；
 * 类如果要实现一个接口，它必须要实现接口声明的所有方法。但是，类可以不实现抽象类声明的所有方法，当然，在这种情况下，类也必须得声明成是抽象的。
@@ -275,7 +308,7 @@
 * 帮助子类做初始化工作。
 
 ### 26.`==` 与 equals(重要)
-* `==` : 它的作用是判断两个对象的地址是不是相等。即，判断两个对象是不是同一个对象。(基本数据类型`==`比较的是值，引用数据类型`==`比较的是内存地址)
+* `==` : 它的作用是**判断两个对象的地址是不是相等**。即，判断两个对象是不是同一个对象。(基本数据类型`==`比较的是值，引用数据类型`==`比较的是内存地址)
 * `equals()` : 它的作用也是判断两个对象是否相等。但它一般有两种使用情况：
 	* 情况1：类没有覆盖 equals() 方法。则通过 equals() 比较该类的两个对象时，等价于通过`==`比较这两个对象。
 	* 情况2：类覆盖了 equals() 方法。一般，我们都覆盖 equals() 方法来判断两个对象的内容相等；若它们的内容相等，则返回 true (即，认为这两个对象相等)。
@@ -775,9 +808,10 @@ class Person{
 * 当父类的方法被private修饰时，表明该方法为父类私有，对其他任何类都是不可见的，因此如果子类定了一个与父类一样的方法，这对于子类来说相当于是一个新的私有方法，且如果要进行向上转型，然后去调用该“覆盖方法”，会产生编译错误。
 * 静态方法只能继承，不能重写（Override）。static方法是编译时**静态绑定**的，属于类，而覆盖是运行时**动态绑定**的(动态绑定的多态),因此不能覆盖.
 
-### 47.Java支持多继承么？如果不支持，如何实现?
-* 在java中是单继承的，也就是说一个类只能继承一个父类。
-* java中实现多继承有两种方式,一是接口，而是内部类。
+### 47.接口是否可以继承接口？Java支持多继承么？如果不支持，如何实现?
+* **接口可以用extends继承接口，并且还可以多继承**。
+* 在Java中是单继承的，也就是说一个类只能继承一个父类。
+* java中实现多继承有两种方式,一是接口，二是内部类。
 	* 实现多个接口：如果两个接口的变量相同，那么在调用该变量的时候，编译出错。
 	  ```java
 	  interface interface1 {
@@ -1333,6 +1367,339 @@ public class MaxMinCommonDivisorMultiple {
 		* g.对象终结规则(Finalizer Rule)：一个对象初始化完成(构造方法执行完成)先行发生于它的finalize()方法的开始。
 		* g.传递性(Transitivity)：如果操作A先行发生于操作B，操作B先行发生于操作C，那就可以得出操作A先行发生于操作C的结论。
 	* 一个操作”时间上的先发生“不代表这个操作会是”先行发生“，那如果一个操作”先行发生“是否就能推导出这个操作必定是”时间上的先发生 “呢？也是不成立的，一个典型的例子就是指令重排序。所以时间上的先后顺序与happens-before原则之间基本没有什么关系，所以衡量并发安全问题一切必须以happens-before 原则为准。
+
+
+### 72.private方法可以通过反射访问，那么private的意义是什么？
+
+* private并不是解决安全问题的，如果想让解决代码的安全问题，请用别的办法。
+* private的意义是OOP（面向对象编程）的封装概念。
+	* 举例说明就是，我是个开饭店的，我跟身为顾客的你说，厨房不能进，而且厨房里的刀具厨具都不能动。但是毕竟没有警卫拿着霰弹枪在门口守着，你非得闯进厨房动道具厨具，肯定也是可以的。
+	* 还有对于setAccessible(true)破坏类的访问规则，带来安全隐患问题。
+
+* 1)`public/protected/private`的区分，想做到的是不暴露内部实现，
+	* 但确实在特殊情況下，需要关注甚至修改内部实现（性能/测试环境/使用场杲）；
+	* 这种例外的存在并不影响封装的理念；这更多的是一种“知道这么多就够别人用了”而不是“这是机密，坚决不能让外人知道”。
+* 2)`setAccessible` 是一种 `hack`
+	* 潜台词是：你清楚内部实现，你知暹你在做卄么，相信你不会搞砸；
+	* 平时不需要过分袒心“如果别人用`setAccessible`来搞我怎么办”之类的问题；
+	* 死代码昉不了活人，也没必要。
+* 3)只有江瑚骗子对会鼓吹"只要.....，你就安全了”
+	*  安全是一整套体系，环环相扣，每一环没扣上时都是隐患；
+	*  Java是有SecurityManager，那又怎么样呢，听说过金山游侠吧；
+	*  围绕真正的敏感数据单独防护，对是正道。
+
+### 73.Java类初始化顺序
+* 静态的属性和代码块只执行一次；
+* **加载顺序**：父类静态代码块 || 父类静态成员属性（这两谁在前就先执行谁，后同）-> 子类静态代码块 || 子类静态成员属性 -> 父类普通代码块 || 父类普通成员字段 -> 父类构造方法 -> 子类普通代码块 || 子类普通成员字段 -> 子类构造方法
+
+
+### 74.局部变量使用前需要显式的赋值，否则编译过不了，为什么这么设计?
+```java
+package com.edu.test.faceTest;
+
+/**
+ * @Author: 王仁洪
+ * @Date: 2019/4/8 19:31
+ */
+public class TestVariable {
+    public static int val;//交给JVM去做
+
+    public static void main(String[] args) {
+        int var;//局部变量交给编译器
+        var = 1;
+        System.out.println("var=" + var);//var=1
+        System.out.println("val=" + val);//val=0
+    }
+}
+```
+
+* 全局变量属于类，类里边的代码执行顺序不确定，所以需要这一种机制给没有赋值的变量赋予默认值；
+* 局部变量的执行顺序是确定的，就无需自动赋予默认值，须由程序员显式的赋初值。
+
+### 75.代码解析题
+* 静态的属性和代码块只执行一次；
+* 加载顺序：父类静态代码块 || 父类静态成员属性（这两谁在前就先执行谁，后同）-> 子类静态代码块 || 子类静态成员属性 -> 父类普通代码块 || 父类普通成员字段 -> 父类构造方法 -> 子类普通代码块 || 子类普通成员字段 -> 子类构造方法
+
+* 题目一：  
+  ```java
+  package com.edu.test.faceTest;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/8 20:16
+   */
+  public class CodeTest {
+      Book book1 = new Book("book1成员变量初始化");
+      static Book book2 = new Book("static成员book2成员变量初始化");
+  
+      public CodeTest(String msg){
+          System.out.println(msg);
+      }
+  
+      Book book3 = new Book("book3成员变量初始化");
+      static Book book4 = new Book("static成员book4成员变量初始化");
+  
+      public static void funStatic(){
+          System.out.println("static修饰的funStatic方法");
+      }
+  
+      public static void main(String[] args) {
+          CodeTest.funStatic();
+          System.out.println("------------------");
+          CodeTest codeTest = new CodeTest("p1初始化");
+  
+          /**
+           * static成员book2成员变量初始化
+           * static成员book4成员变量初始化
+           * static修饰的funStatic方法
+           * ------------------
+           * book1成员变量初始化
+           * book3成员变量初始化
+           * p1初始化
+           */
+      }
+  }
+  class Book{
+      public Book(String msg){
+          System.out.println(msg);
+      }
+  }
+  ```
+
+* 题目二：
+  ```
+  package com.edu.test.faceTest;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/8 20:16
+   */
+  public class CodeTest {
+      Book book1 = new Book("book1成员变量初始化");
+      static Book book2;
+  
+      static {
+          book2 = new Book("static成员book2成员变量初始化");
+          book4 = new Book("static成员book4成员变量初始化");
+      }
+  
+      public CodeTest(String msg){
+          System.out.println(msg);
+      }
+  
+      Book book3 = new Book("book3成员变量初始化");
+      static Book book5 = new Book("static成员book5成员变量初始化");
+      static Book book4;
+  
+      public static void funStatic(){
+          System.out.println("static修饰的funStatic方法");
+      }
+  
+      public static void main(String[] args) {
+          CodeTest.funStatic();
+          System.out.println("------------------");
+          CodeTest codeTest = new CodeTest("p1初始化");
+  
+          /**
+           * static成员book2成员变量初始化
+           * static成员book4成员变量初始化
+           * static成员book5成员变量初始化
+           * static修饰的funStatic方法
+           * ------------------
+           * book1成员变量初始化
+           * book3成员变量初始化
+           * p1初始化
+           */
+      }
+  }
+  class Book{
+      public Book(String msg){
+          System.out.println(msg);
+      }
+  }
+  ```
+* 题目三：
+  ```java
+  package com.edu.test.faceTest;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/8 20:43
+   */
+  public class CodeTestDadSon {
+      public static void main(String[] args) {
+          Dad dad = new Dad();
+          System.out.println("--------------");
+          Son son = new Son();
+          son.sayHello();
+          son.sayHelloWorld();
+          /**
+           * com.edu.test.faceTest.Dad
+           * 父类构造方法
+           * --------------
+           * com.edu.test.faceTest.Son
+           * 父类构造方法
+           * 子类构造方法
+           * com.edu.test.faceTest.Son
+           * 父类私有说hello
+           * com.edu.test.faceTest.Son
+           * 子类 Hello World!
+           */
+      }
+  }
+  class Dad{
+      public Dad(){
+          System.out.println(this.getClass().getName());
+          System.out.println("父类构造方法");
+      }
+  
+      /**
+       * 为什么子类存在该方法，却没有调用子类的方法，而去调用父类私有方法？
+       * 涉及静态绑定和动态绑定
+       * 静态绑定 编译时，就近原则，private不参与动态绑定
+       */
+      private void hello(){
+          System.out.println("父类私有说hello");
+      }
+      public void sayHello(){
+          System.out.println(this.getClass().getName());
+          /**
+           * 这个this指什么？指的是实例化的类对象
+           * 如果 new Son(); 则是子类son对象
+           * 如果 new Dad(); 则是父类对象
+           */
+          this.hello();
+      }
+  
+      public void helloWorld(){
+          System.out.println("父类 Hello World!");
+      }
+      public void sayHelloWorld(){
+          System.out.println(this.getClass().getName());
+          /**
+           * 这个this指什么？指的是实例化的类对象
+           * 如果 new Son(); 则是子类son对象
+           * 如果 new Dad(); 则是父类对象
+           */
+          this.helloWorld();
+      }
+  }
+  
+  class Son extends Dad{
+      public Son() {
+          System.out.println("子类构造方法");
+      }
+      public void hello(){
+          System.out.println("子类说hello");
+      }
+  
+      @Override
+      public void helloWorld() {
+          System.out.println("子类 Hello World!");
+      }
+  }
+  ```
+
+### 76.final、finally、finalize的区别
+* final：最终的（知识点31）
+	* 修饰**变量**时：该变量变为常量，不可修改；
+		* 当final修饰一个**基本数据类型**时，表示该基本数据类型的值一旦在初始化后便不能发生变化；如果final修饰一个**引用类型**时，则在对其初始化之后便不能再让其指向其他对象了，但该引用所指向的对象的内容是可以发生变化的。本质上是一回事，因为引用的值是一个地址，final要求值，即地址的值不发生变化。　
+		* final修饰一个成员变量（属性），必须要显示初始化。这里有两种初始化方式，
+			* 一种是在变量声明的时候初始化；
+			* 第二种方法是在声明变量的时候不赋初值，但是要在这个变量所在的类的**所有的构造函数**中对这个变量赋初值。
+		* 当函数的参数类型声明为final时，说明该参数是只读型的。即你可以读取使用该参数，但是无法改变该参数的值。
+	* 修饰**方法**时：该方法只能继承，不能被重写；
+		* 若父类中final方法的访问权限为private，将导致子类中不能直接继承该方法，因此，此时可以在子类中定义相同方法名的函数，此时不会与重写final的矛盾，而是在子类中重新地定义了新方法。
+	* 修饰**类**时：表示这个类不可以被继承。final类中所有的成员方法都会隐式的定义为final方法。
+* finally：（知识点32）
+	* finally作为异常处理的一部分，它只能用在try/catch语句中，并且附带一个语句块，表示这段语句最终**一定会被执行**（不管有没有抛出异常），经常被用在需要释放资源的情况下。
+	* 很多人都认为finally语句块一定会执行，但真的是这样么？答案是否定的。
+		* **只有与finally对应的try语句块得到执行的情况下，finally语句块才会执行**。
+		* 但是，在某些情况下，即使try语句执行了，finally语句也不一定执行。
+			* 在 try(或catch) 语句块中执行了 System.exit (0) 语句，终止了 Java 虚拟机的运行。
+			* 当一个线程在执行 try 语句块或者 catch 语句块时被打断（interrupted）或者被终止（killed），与其相对应的 finally 语句块可能不会执行。
+			* 还有更极端的情况，就是在线程运行 try 语句块或者 catch 语句块时，突然死机或者断电，finally 语句块肯定不会执行了。
+* finalize：
+	* finalize()是在java.lang.Object里定义的，也就是说每一个对象都有这么个方法。这个方法在gc启动，该对象被回收的时候被调用。其实gc可以回收大部分的对象（凡是new出来的对象，gc都能搞定，一般情况下我们又不会用new以外的方式去创建对象），所以一般是不需要程序员去实现finalize的。 
+	* 特殊情况下，需要程序员实现finalize，当对象被回收的时候释放一些资源，比如：一个socket链接，在对象初始化时创建，整个生命周期内有效，那么就需要实现finalize，关闭这个链接。 
+	* 使用finalize还需要注意一个事，调用super.finalize();
+	* 一个对象的finalize()方法只会被调用一次，而且finalize()被调用不意味着gc会立即回收该对象，所以有可能调用finalize()后，该对象又不需要被回收了，然后到了真正要被回收的时候，因为前面调用过一次，所以不会调用finalize()，产生问题。 所以，推荐不要使用finalize()方法，它跟析构函数不一样。
+
+
+### 77.try语句块与return
+
+* try语句块里有一个return语句，那么跟在这个try后的finally语句块里的代码会不会执行？什么时候被执行？在return前还是后？
+  ```java
+  package com.edu.test.faceTest;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/8 21:49
+   */
+  public class TryReturn {
+      public static void main(String[] args) {
+          System.out.println("结果： " + TryReturn.test());
+          /**
+           * try里的i ：1
+           * 进入finally...
+           * finally里面的i ：2
+           * 结果： 1
+           */
+      }
+  
+      public static int test(){
+          int i = 1;
+          try {
+              System.out.println("try里的i ：" + i);
+              return i;
+          }finally {
+              System.out.println("进入finally...");
+              ++i;
+              System.out.println("finally里面的i ：" + i);
+          }
+      }
+  }
+  ```
+
+    <div align="center"><img src="./img/019.png"/></div>
+
+
+* 关于返回值：如果try语句里有return，返回的是try语句块中变量值。 详细执行过程如下：
+	* 如果有返回值，就把返回值保存到局部变量中；
+	* 执行jsr指令跳到finally语句里执行；
+	* 执行完finally语句后，返回之前保存在局部变量表里的值。
+	* 如果try，finally语句里均有return，忽略try的return，而使用finally的return.
+
+
+
+
+### 78.在java中，String被设计成final类，那为什么平时使用时，String的值可以被改变呢？
+
+* 字符串常量池是java堆内存中一个特殊的存储区域，当我们建立一个String对象时，假设常量池不存在该字符串，则创建一个，若存在则直接引用已经存在的字符串。当我们对String对象值改变的时候，例如 String a="A"; a="B" 。a是String对象的一个引用（我们这里所说的String对象其实是指字符串常量），当a=“B”执行时，**并不是原本String对象("A")发生改变，而是创建一个新的对象("B")，令a引用它**。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
