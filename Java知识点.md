@@ -1,5 +1,7 @@
 <div align="center"><h1>一、JAVA基础知识</h1></div>
 
+#### java是一种强语言，它是纯面向对象的。
+
 ### 1.面向对象和面向过程的区别
 * 面向过程
 	* 优点： 性能比面向对象高，因为类调用时需要实例化，开销比较大，比较消耗资源;比如单片机、嵌入式开发、Linux/Unix等一般采用面向过程开发，性能是最重要的因素。
@@ -7,6 +9,48 @@
 * 面向对象
 	* 优点： 易维护、易复用、易扩展，由于面向对象有封装、继承、多态性的特性，可以设计出低耦合的系统，使系统更加灵活、更加易于维护
 	* 缺点： 性能比面向过程低
+* 面向对象的特征：（封装、继承、多态）
+	* A：封装（encapsulation）：就是把对象的属性和操作（或服务）结合为一个独立的整体，并尽可能隐藏对象的内部实现细节，仅对外公开接口，**用于控制在程序中属性的读和修改的访问级别**（private、protected、public）。（总之一句话，封装就是指隐藏对象的属性和实现细节，仅仅对外提供公共方法去访问它。）
+		* 封装的好处：
+			* **将变化隔离**。不难理解，都包装好了，不让你知道它内部是怎么实现的了，你能知道它发生啥变化吗？当然是false了。
+			* **便于使用，不用了解内部构造**。
+			* **提高重用性**。这个就好玩了，将一个事物封装起来之后，必须要对外暴露一些接口（好让人使用啊），不然，就没有存在的必要了，没有意义。而这暴露出来的方法（一般我们用public修饰），当然就不止一个人能使用了，那是千千万万的用户啊，可以重复使用。这就像是，你电脑上的USB接口，不止你一个人能用吧？ 
+			* **提高安全性**。私有仅仅是封装的一种表现形式。之所以对外提供访问方式，就是因为**可以在访问方式中加入逻辑判断等语句，对访问的数据进行操作，提高代码健壮性**。
+		* 封装的原则：
+			* 将不需要对外提供的内容都隐藏起来。这个不解释，你要是不隐藏，那能叫封装吗？ 
+			* 把属性都隐藏，提供公共方法对其访问。
+		* 常用之一：将成员变量私有化，对外提供对应的set、get方法对其进行访问，提高对数据访问的安全性。
+	* B：继承（inheritance）：特殊类的对象拥有一般类的全部属性与行为，称为特殊类对一般类的**继承**。
+		* 子类对象在进行实例化前首先调用父类构造方法，再调用子类构造方法实例化子类对象。
+			* 类实例化的过程：最先调用静态代码块（只会调用一次），然后是构造块，最后才是构造方法。
+		* Java只允许单继承不允许多继承（一个子类继承一个父类），但是**接口可以多继承**。（一个类只能继承一个类，一个接口可以继承多个接口，一个类可以实现多个接口）
+		* 在继承时，子类会继承父类的所有结构。
+			* 子类可以继承父类private的属性和方法，只不过父类的私有属性和方法，子类是无法直接访到的（即**只是拥有，但是无法使用**）；
+			* 子类不能继承父类中的构造方法；
+			* 子类可以继承父类的final方法，但是不可重写；
+			* 子类不会继承父类的static方法与属性，因为这是属于类本身的，但是是可以访问；
+				* 子类和父类中同名的static变量和方法都是相互独立的，并不存在任何的重写的关系。
+			* 
+		* 子类可以拥有自己的属性和方法，也可以对父类进行扩展；
+		* 子类可以用自己的方法去实现父类的方法；
+		* 子类可以重写父类的（非final方法、非private方法、非构造方法）方法；
+		* 对于父类的final方法，子类只能继承，不能重写；
+		* 在子类构造方法中，代码块第一行都会默认调用父类的无参构造方法；
+	* C：多态（polymorphic）：
+		* 向上类型转换
+		  ```java
+		  Animal animal = new Cat();//猫是动物
+		  ```
+		* 向下类型转换
+		  ```java
+		  Animal animal = new Cat();
+		  Cat cat = (Cat)animal;//ok
+
+		  Animal animal1 = new Animal();
+		  //Exception in thread "main" java.lang.ClassCastException: Animal cannot be cast to Cat
+		  Cat cat1 = (Cat)animal1;
+		  ```
+
 
 ### 2.Java 语言有哪些特点
 * 1)简单易学；
@@ -55,10 +99,10 @@
 * 6)Oracle JDK根据二进制代码许可协议获得许可，而OpenJDK根据GPL v2许可获得许可。
 
 ### 5.Java和C++的区别
-* 都是面向对象的语言，都支持封装、继承和多态
-* Java 不提供指针来直接访问内存，程序内存更加安全
-* Java 的类是单继承的，C++ 支持多重继承；虽然 Java 的类不可以多继承，但是接口可以多继承。
-* Java 有自动内存管理机制，不需要程序员手动释放无用内存
+* 都是面向对象的语言，都支持封装、继承和多态；
+* Java 不提供指针来直接访问内存，程序内存更加安全；
+* Java 的类是单继承的，C++ 支持多重继承；虽然 Java 的类不可以多继承，但是**接口可以多继承**；
+* Java 有自动内存管理机制，不需要程序员手动释放无用内存。
 
 ### 6.什么是 Java 程序的主类 应用程序和小程序的主类有何不同
 * 一个程序中可以有多个类，但只能有一个类是主类。
@@ -83,9 +127,9 @@
 * 在讲继承的时候我们就知道**父类的私有属性和构造方法并不能被继承**，所以 Constructor 也就不能被 override（重写）,但是可以 overload（重载）,所以你可以看到一个类中有多个构造函数的情况。
 
 ### 10.重载和重写的区别
-* **重载**： 发生在同一个类中，方法名必须相同，参数类型不同、个数不同、顺序不同，方法返回值和访问修饰符可以不同，发生在编译时。
+* **重载**： 发生在**同一个类**中，方法名必须相同，参数类型不同、个数不同、顺序不同，方法返回值和访问修饰符可以不同，发生在编译时（**编译时的多态**）。
 	* 当参数列表相同但返回值不同时，将会出现编译错误，这并不是重载，因为jvm无法根据返回值类型来判断应该调用哪个方法。 　　
-* **重写(覆盖)**： 发生在父子类中，方法名、参数列表必须相同，返回值范围小于等于父类，抛出的异常范围小于等于父类，访问修饰符范围大于等于父类；如果父类方法访问修饰符为 private 则子类就不能重写该方法。
+* **重写(覆盖)**： 发生在**父子类**中，方法名、参数列表必须相同，**返回值范围小于等于父类**，抛出的异常范围小于等于父类，**访问修饰符范围大于等于父类**；如果父类方法访问修饰符为 private 则子类就不能重写该方法。
 	* 通过子类创建的实例对象调用这个方法时，将调用子类中的定义方法，这相当于把父类中定义的那个完全相同的方法给覆盖了，这也是面向对象编程的多态性的一种表现。
 
 ### 11.Java 面向对象编程三大特性: 封装 继承 多态
@@ -164,8 +208,15 @@
   ```
 * 在java中，应该注意自动拆装箱，因为有时可能因为java自动装箱机制，而导致创建了许多对象，对于内存小的平台会造成压力。
 
-### 14. 在一个静态方法内调用一个非静态成员为什么是非法的
-* 由于静态方法可以不通过对象进行调用，因此在静态方法里，不能调用其他非静态变量，也不可以访问非静态变量成员。
+### 14.静态与实例
+
+* 1）静态变量与实例变量的区别：
+	* 静态变量依赖于类生存的，**当类加载时静态变量就出现了**，所有对象共享一个静态变量，静态变量存储在**静态区（全局区）**；
+	* 每当生成一个对象，实例变量就生成一次，实例变量存储在**堆区**。
+* 2）静态方法与实例方法的：
+
+* 3)在一个静态方法内调用一个非静态成员为什么是非法的
+	* 由于静态方法可以不通过对象进行调用，因此在静态方法里，不能调用其他非静态变量，也不可以访问非静态变量成员。
 
 ### 15.在 Java 中定义一个不做事且没有参数的构造方法的作用
 * Java 程序在执行子类的构造方法之前，**如果没有用 super() 来调用父类特定的构造方法，则会调用父类中“没有参数的构造方法”**。
@@ -178,15 +229,15 @@
 * 所以，**实际上java和javax没有区别。这都是一个名字**。
 
 ## 17.接口和抽象类的区别是什么
-* 接口的方法默认是 public，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），抽象类可以有非抽象的方法,抽象类的成员函数可以是 private，protected 或者是 public 。
-* 接口中的实例变量默认是 final 类型的，而抽象类中则不一定,抽象类可以包含非 final 的变量。
-* 接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象 从设计层面来说，抽象是对类的抽象，是一种模板设计，接口是行为的抽象，是一种行为的规范。
+* 接口的方法**默认是 public**，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），抽象类可以有非抽象的方法,抽象类的成员函数可以是 private，protected 或者是 public 。
+* 接口中的实例变量**默认是 final 类型**的，而抽象类中则不一定,抽象类可以包含非 final 的变量。
+* 接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象 从设计层面来说，抽象是对类的抽象，是一种**模板设计**，接口是行为的抽象，是一种**行为的规范**。
 * 接口中所有的方法隐含的都是抽象的。而抽象类则可以同时包含抽象和非抽象的方法。
-* 一个类可以实现多个接口，但最多只能实现一个抽象类
+* 一个类可以实现多个接口，但最多只能实现一个抽象类；
 * 类如果要实现一个接口，它必须要实现接口声明的所有方法。但是，类可以不实现抽象类声明的所有方法，当然，在这种情况下，类也必须得声明成是抽象的。
 * 抽象类可以在不提供接口方法实现的情况下实现接口。
 
-	* 备注:在JDK8中，接口也可以定义静态方法，可以直接用接口名调用。实现类和实现是不可以调用的。如果同时实现两个接口，接口中定义了一样的默认方法，必须重写，不然会报错。
+	* 备注:在JDK8中，接口也可以定义静态方法，可以直接用接口名调用，实现类和实现是不可以调用的。如果同时实现两个接口，接口中定义了一样的默认方法，必须重写，不然会报错。
 
 ### 18.成员变量与局部变量的区别有那些
 * 从语法形式上，看成员变量是属于类的，而局部变量是在方法中定义的变量或是方法的参数；成员变量可以被 public,private,static 等修饰符所修饰，而局部变量不能被访问控制修饰符及 static 所修饰；但是，成员变量和局部变量都能被 final 所修饰；
@@ -271,21 +322,178 @@
 
 面试官可能会问你：“你重写过 hashcode 和 equals 么，为什么重写equals时必须重写hashCode方法？”
 
+* Hash是散列的意思，就是把任意长度的输入，通过散列算法变换成固定长度的输出，该输出就是散列值。关于散列值，有以下几个关键讨论：
+	* 不同关键字经过散列算法变换后可能得到同一个散列地址，这种现象称为碰撞：**hash碰撞**；
+	* 如果两个hash值不同（前提是同一个hash算法），那么这两个hash值对应的原始输入必定不同。
+
 * hashCode（）介绍
-	* hashCode() 的作用是获取哈希码，也称为散列码；它实际上是返回一个int整数。
-	* 这个哈希码的作用是确定该对象在哈希表中的索引位置。hashCode() 定义在JDK的`Object.java`中，这就意味着Java中的任何类都包含有hashCode() 函数。
-	* 散列表存储的是键值对(key-value)，它的特点是：能根据“键”快速的检索出对应的“值”。这其中就利用到了散列码！（可以快速找到所需要的对象）
+	* hashCode() 的作用是获取哈希码，也称为散列码；它实际上是返回一个int整数；
+	* 这个哈希码的作用是确定该对象在哈希表中的索引位置。hashCode() 定义在JDK的`Object.java`中，这就意味着Java中的任何类都包含有hashCode() 函数；
+	* 散列表存储的是键值对(key-value)，它的特点是：能根据“键”快速的检索出对应的“值”。这其中就利用到了散列码！（可以快速找到所需要的对象）；
+	* **hashCode的存在主要是为了提高散列结构存储中查找的效率，在线性表中没有作用**；
+	* Integer类型的值的hashCode值就是它本身的值。
 
 * 为什么要有 hashCode
 	* 我们以“HashSet 如何检查重复”为例子来说明为什么要有 hashCode：
 	  >当你把对象加入 HashSet 时，HashSet 会先计算对象的 hashcode 值来判断对象加入的位置，同时也会与其他已经加入的对象的 hashcode 值作比较，如果没有相符的hashcode，HashSet会假设对象没有重复出现。但是如果发现有相同 hashcode 值的对象，这时会**调用 equals（）方法来检查** hashcode 相等的对象是否真的相同。如果两者相同，HashSet 就不会让其加入操作成功。如果不同的话，就会重新散列到其他位置。（摘自我的Java启蒙书《Head first java》第二版）。这样我们就大大减少了 equals 的次数，相应就大大提高了执行速度。
 
 * hashCode（）与equals（）的相关规定
-	* 如果两个对象相等，则hashcode一定也是相同的
-	* 两个对象相等,对两个对象分别调用equals方法都返回true
-	* 两个对象有相同的hashcode值，它们也不一定是相等的
-	* 因此，equals 方法被覆盖过，则 hashCode 方法也必须被覆盖
-	* hashCode() 的默认行为是对堆上的对象产生独特值。如果没有重写 hashCode()，则该 class 的两个对象无论如何都不会相等（即使这两个对象指向相同的数据）
+	* 如果两个对象相等，则hashcode一定也是相同的；
+	* 两个对象相等,对两个对象分别调用equals方法都返回true；
+	* （两个对象有相同的hashcode值，它们也不一定是相等的）如果两个对象的hashCode相同，不代表两个对象就相同，只能说明这两个对象在散列存储结构中，存放于同一个位置；
+	* 因此，equals 方法被覆盖过，则 hashCode 方法也必须被覆盖；
+	* hashCode() 的默认行为是对**堆**上的对象产生独特值。如果没有重写 hashCode()，则该 class 的两个对象无论如何都不会相等（即使这两个对象指向相同的数据）
+
+```java
+package com.edu.test.faceTest;
+
+import java.util.Objects;
+
+/**
+ * @Author: 王仁洪
+ * @Date: 2019/4/7 10:26
+ */
+public class TestHash {
+    public static void main(String[] args) {
+        String a = "100";
+        String b = "EFG";
+        String c = "100";
+        String d = "EFG";
+        String e = "EFGH";
+        String g = "100F";
+        String bb = new String("EFG");
+
+        Integer f = 100;
+
+        /**
+         * public final class String{
+         *     public int hashCode() {
+         *         int h = hash;
+         *         if (h == 0 && value.length > 0) {
+         *             char val[] = value;
+         *
+         *             for (int i = 0; i < value.length; i++) {
+         *                 h = 31 * h + val[i];
+         *             }
+         *             hash = h;
+         *         }
+         *         return h;
+         *     }
+         * }
+         *
+         * public final class Integer extends Number implements Comparable<Integer> {
+         *     @Override
+         *     public int hashCode() {
+         *         return Integer.hashCode(value);
+         *     }
+         *
+         *     public static int hashCode(int value) {
+         *         return value;
+         *     }
+         * }
+         */
+        System.out.println(a.hashCode());//48625
+        System.out.println(b.hashCode());//68550
+        System.out.println(c.hashCode());//48625
+        System.out.println(d.hashCode());//68550
+        System.out.println(e.hashCode());//2125122
+        System.out.println(g.hashCode());//1507445
+        System.out.println(f.hashCode());//100
+
+        /**
+         * public final class String{
+         * public boolean equals(Object anObject) {
+         *         if (this == anObject) {
+         *             return true;
+         *         }
+         *         if (anObject instanceof String) {
+         *             String anotherString = (String)anObject;
+         *             int n = value.length;
+         *             if (n == anotherString.value.length) {
+         *                 char v1[] = value;
+         *                 char v2[] = anotherString.value;
+         *                 int i = 0;
+         *                 while (n-- != 0) {
+         *                     if (v1[i] != v2[i])
+         *                         return false;
+         *                     i++;
+         *                 }
+         *                 return true;
+         *             }
+         *         }
+         *         return false;
+         *     }
+         * }
+         */
+        System.out.println(b.equals(bb));//true
+        System.out.println(bb.equals(b));//true
+
+        System.out.println(b.hashCode());//68550
+        System.out.println(bb.hashCode());//68550
+
+        System.out.println(b==bb);//false
+    }
+}
+
+class Person{
+    private String name;
+    private Integer age;
+
+    public Person(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(name, person.name) &&
+                Objects.equals(age, person.age);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
+    }
+    /**
+     * public final class Objects {
+     *      public static int hash(Object... values) {
+     *         return Arrays.hashCode(values);
+     *       }
+     * }
+     *
+     * public class Arrays {
+     *     public static int hashCode(Object a[]) {
+     *         if (a == null)
+     *             return 0;
+     *
+     *         int result = 1;
+     *
+     *         for (Object element : a)
+     *             result = 31 * result + (element == null ? 0 : element.hashCode());
+     *
+     *         return result;
+     *     }
+     * }
+     *
+     * public class Object {
+     *     public native int hashCode();
+     * }
+     */
+}
+
+/**
+ * public class Object {
+ *     public boolean equals(Object obj) {
+ *         return (this == obj);
+ *     }
+ *
+ *     public native int hashCode();
+ * }
+ */
+```
 
 ### 28.什么是值传递和引用传递？java中是值传递还是引用传递，还是都有?为什么Java中只有值传递?
 * **值传递** 就是在方法调用的时候，实参是将自己的一份拷贝赋给形参，在方法内，对该参数值的修改不影响原来实参，常见的例子就是刚开始学习C语言的时候那个交换方法的例子了。
@@ -960,27 +1168,171 @@ public class Demo1 {
    <div align="center"><img src="./img/015.png"/></div>
 
 
+### 69.求最大公约数和最小公倍数
 
+```java
+package com.edu.test.faceTest;
 
+/**
+ * @Author: 王仁洪
+ * @Date: 2019/4/7 11:24
+ */
+public class MaxMinCommonDivisorMultiple {
+    public static void main(String[] args) {
+        int a = 7;
+        int b = 20;
 
+        MaxMinCommonDivisorMultiple commonDivisorMultiple = new MaxMinCommonDivisorMultiple();
+        Integer commonDivisor = commonDivisorMultiple.greatestCommonDivisor(a, b);
+        Integer commonMultiple = commonDivisorMultiple.minimumCommonMultiple(a, b);
+        System.out.println(a + "和" + b + "的最大公约数为：" + commonDivisor);
+        //7和20的最大公约数为：1
+        System.out.println(a + "和" + b + "的最小公倍数为：" + commonMultiple);
+        //7和20的最小公倍数为：140
+    }
 
+    /**
+     * 最大公约数
+     * @param a
+     * @param b
+     * @return
+     */
+    public Integer greatestCommonDivisor(int a,int b){
+        int min = a > b ? b : a;
 
+        int greatestCommonDivisor = 1;
 
+        for (int i=min;i>1;i--){
+            if (a%i==0 && b%i==0){
+                greatestCommonDivisor = i;
+                break;
+            }
+        }
+        return greatestCommonDivisor;
+    }
 
+    /**
+     * 最小公倍数
+     * @param a
+     * @param b
+     * @return
+     */
+    public Integer minimumCommonMultiple(int a,int b){
+        int max = a > b ? a : b;
 
+        int minimumCommonMultiple = max;
 
+        for (int i=max;;i++){
+            if (i%a==0 && i%b==0){
+                minimumCommonMultiple = i;
+                break;
+            }
+        }
+        return minimumCommonMultiple;
+    }
+}
+```
 
+### 70.Java的内存结构，也就是运行时的数据区域：
 
+* Java虚拟机在执行Java程序的过程中，会把它管理的内存划分为几个不同的数据区域，这些区域都有各自的用途、创建时间、销毁时间。
+* Java运行时数据区分为下面几个内存区域：
 
+	<div align="center"><img src="./img/016.png"/></div>
 
+	* 1)PC寄存器/程序计数器：
+		* 严格来说是一个数据结构，用于保存当前正在执行的程序的内存地址，
+		* 由于Java是支持多线程执行的，所以程序执行的轨迹不可能一直都是线性执行。
+		* 当有多个线程交叉执行时，被中断的线程的程序当前执行到哪条内存地址必然要保存下来，以便用于被中断的线程恢复执行时再按照被中断时的指令地址继续执行下去。
+		* 为了线程切换后能恢复到正确的执行位置，每个线程都需要有一个独立的程序计数器，
+		* 各个线程之间计数器互不影响，独立存储，我们称这类内存区域为“**线程私有**”的内存,这在某种程度上有点类似于“ThreadLocal”，是**线程安全**的。
+	* 2)Java栈 Java Stack：
+		* Java栈总是**与线程关联在一起**的，每当创建一个线程，JVM就会为该线程创建对应的Java栈，
+		* 在这个Java栈中又会包含多个**栈帧(Stack Frame)**，这些栈帧是与每个方法关联起来的，每运行一个方法就创建一个栈帧，每个栈帧会含有一些**局部变量、操作栈和方法返回值等信息**。
+		* 每当一个方法执行完成时，该栈帧就会弹出栈帧的元素作为这个方法的返回值，并且清除这个栈帧，
+		* Java栈的栈顶的栈帧就是当前正在执行的**活动栈**，也就是当前正在执行的方法，PC寄存器也会指向该地址。只有这个活动的栈帧的本地变量可以被操作栈使用，当在这个栈帧中调用另外一个方法时，与之对应的**一个新的栈帧被创建**，这个新创建的栈帧被放到Java栈的栈顶，变为当前的活动栈。同样现在只有这个栈的本地变量才能被使用，当这个栈帧中所有指令都完成时，这个栈帧被移除Java栈，刚才的那个栈帧变为活动栈帧，前面栈帧的返回值变为这个栈帧的操作栈的一个操作数。
+		* **由于Java栈是与线程对应起来的，Java栈数据不是线程共有的，所以不需要关心其数据一致性，也不会存在同步锁的问题**。
+		* 在Java虚拟机规范中，对这个区域规定了两种异常状况：
+			* 如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常；
+			* 如果虚拟机可以动态扩展，如果扩展时无法申请到足够的内存，就会抛出OutOfMemoryError异常。在Hot Spot虚拟机中，可以使用-Xss参数来设置栈的大小。栈的大小直接决定了函数调用的可达深度。
+		
+		<div align="center"><img src="./img/017.png"/></div>
 
+	* 3)堆 Heap:
+		* 堆是JVM所管理的内存中最大的一块，是被所有Java线程锁共享的，**不是线程安全的**，**在JVM启动时创建**。
+		* 堆是存储Java对象的地方，这一点Java虚拟机规范中描述是：所有的**对象实例**以及**数组**都要在堆上分配。
+		* Java堆是GC管理的主要区域，从内存回收的角度来看，由于现在GC基本都采用分代收集算法，所以Java堆还可以细分为：**新生代**和**老年代**；
+			* 新生代再细致一点有 **Eden空间、From Survivor空间、To Survivor空间**等。
+	* 4)方法区Method Area:
+		* 方法区存放了要加载的类的信息（名称、修饰符等）、类中的静态常量、类中定义为final类型的常量、类中的Field信息、类中的方法信息，当在程序中通过Class对象的`getName.isInterface`等方法来获取信息时，这些数据都来源于方法区。
+		* **方法区是被Java线程锁共享的，不像Java堆中其他部分一样会频繁被GC回收**，它存储的信息相对比较稳定，**在一定条件下会被GC**，
+		* 当方法区要使用的内存超过其允许的大小时，会抛出OutOfMemory的错误信息。
+		* 方法区也是堆中的一部分，就是我们通常所说的Java堆中的**永久区** Permanet Generation，大小可以通过参数来设置,可以通过-XX:PermSize指定初始值，`-XX:MaxPermSize`指定最大值。
+	* 5)常量池Constant Pool:
+		* 常量池本身是方法区中的一个数据结构。
+		* 常量池中存储了如**字符串、final变量值、类名和方法名常量**。
+		* **常量池在编译期间就被确定，并保存在已编译的`.class`文件中**。一般分为两类：**字面量**和**引用量**。
+			* 字面量就是字符串、final变量等。
+			* 类名和方法名属于引用量。引用量最常见的是在调用方法的时候，根据方法名找到方法的引用，并以此定为到函数体进行函数代码的执行。引用量包含：类和接口的权限定名、字段的名称和描述符，方法的名称和描述符。
+	* 6)本地方法栈 Native Method Stack:
+		* 本地方法栈和Java栈所发挥的作用非常相似，区别不过是Java栈为JVM执行Java方法服务，而**本地方法栈为 JVM 执行 Native方法 服务**。本地方法栈也会抛出StackOverflowError和OutOfMemoryError异常。
 
+### 71.Java内存模型--JMM(Java Memory Model)
 
+* 1)在并发编程中，多个线程之间采取什么机制进行通信（信息交换），什么机制进行数据的同步？
+	* 在Java语言中，采用的是**共享内存模型来实现多线程之间的信息交换和数据同步的**。
+	* 线程之间通过共享程序 公共的状态，通过读-写内存中公共状态的方式来进行隐式的通信。
+	* 同步指的是程序在控制多个线程之间执行程序的相对顺序的机制，在共享内存模型中，同步是显式的，程序员必须显式指定某个方法/代码块需要在多线程之间互斥执行。
+* 2)主内存和工作内存：
+	* <u>Java内存模型的主要目标是**定义程序中各个变量（共享）的访问规则**</u>，即在JVM中将变量存储到内存和从内存中取出变量这样的底层细节。
+		* 此处的变量与Java编程里面的变量有所不同步，它包含了**实例字段**、**静态字段**和**构成数组对象的元素**，但**不包含局部变量和方法参数**，因为后者是线程私有的，不会共享，当然不存在数据竞争问题；
+		* （如果局部变量是一个reference引用类型，它引用的对象在Java堆中可被各个线程共享，但是reference引用本身在Java栈的局部变量表中，是线程私有的）。
+		* 为了获得较高的执行效能，Java内存模型并没有限制执行引起使用处理器的特定寄存器或者缓存来和主内存进行交互，也没有限制即时编译器进行调整代码执行顺序这类优化措施。
+	* <u>JMM（Java内存模型）规定了**所有的变量都存储在主内存（Main Memory）中**。每个线程还有自己的工作内存（Working Memory）</u>;
+	* 线程的工作内存中保存了该线程使用到的变量的主内存的副本拷贝，线程对变量的所有操作（读取、赋值等）都必须在工作内存中进行，而**不能直接读写主内存中的变量**（**volatile变量仍然有工作内存的拷贝，但是由于它特殊的操作顺序性规定，所以看起来如同直接在主内存中读写访问一般**）。
+	* 不同的线程之间也无法直接访问对方工作内存中的变量，线程之间值的传递都需要通过主内存来完成。
 
+		<div align="center"><img src="./img/018.png"/></div>
 
+		* 线程1和线程2要想进行数据的交换一般要经历下面的步骤：
 
+			* 1>线程1把工作内存1中的更新过的共享变量刷新到主内存中去。
 
+			* 2>线程2到主内存中去读取线程1刷新过的共享变量，然后copy一份到工作内存2中去。
 
+* 3)Java内存模型是围绕着并发编程中原子性、可见性、有序性这三个特征来建立的，那我们依次看一下这三个特征：
+	* 1>原子性（Atomicity）：一个操作不能被打断，要么全部执行完毕，要么不执行。在这点上有点类似于事务操作，要么全部执行成功，要么回退到执行该操作之前的状态。
+		* 基本类型数据的访问大都是原子操作，long 和double类型的变量是64位，但是在32位JVM中，32位的JVM会将64位数据的读写操作分为2次32位的读写操作来进行，这就导致了long、double类型的变量在32位虚拟机中是非原子操作，数据有可能会被破坏，也就意味着多个线程在并发访问的时候是线程非安全的。
+		* 在32位JVM中，64位的long数据的读和写都不是原子操作，即不具有原子性，并发的时候相互干扰。要想保证对long、double类型数据的操作的原子性，可以对访问该数据的方法进行同步。
+
+	* 2>可见性：一个线程对共享变量做了修改之后，其他的线程立即能够看到（感知到）该变量这种修改（变化）。
+		* **Java内存模型是通过将在工作内存中的变量修改后的值同步到主内存，在读取变量前从主内存刷新最新值到工作内存中，这种依赖主内存的方式来实现可见性的**。
+		* 无论是普通变量还是volatile变量都是如此，区别在于：volatile的特殊规则保证了**volatile变量值修改后的新值立刻同步到主内存**，每次使用volatile变量前立即从主内存中刷新，因此volatile保证了多线程之间的操作变量的可见性，而普通变量则不能保证这一点。
+		* 除了volatile关键字能实现可见性之外，还有synchronized,Lock,final也是可以的。
+			* 使用synchronized关键字，在同步方法/同步块开始时（Monitor Enter）,使用共享变量时会从主内存中刷新变量值到工作内存中（即从主内存中读取最新值到线程私有的工作内存中），在同步方法/同步块结束时(Monitor Exit),会将工作内存中的变量值同步到主内存中去（即将线程私有的工作内存中的值写入到主内存进行同步）。
+			* 使用Lock接口的最常用的实现ReentrantLock(重入锁)来实现可见性：当我们在方法的开始位置执行lock.lock()方法，这和synchronized开始位置（Monitor Enter）有相同的语义，即使用共享变量时会从主内存中刷新变量值到工作内存中（即从主内存中读取最新值到线程私有的工作内存中），在方法的最后finally块里执行lock.unlock()方法，和synchronized结束位置（Monitor Exit）有相同的语义,即会将工作内存中的变量值同步到主内存中去（即将线程私有的工作内存中的值写入到主内存进行同步）。
+			* final关键字的可见性是指：被final修饰的变量，在构造函数数一旦初始化完成，并且在构造函数中并没有把“this”的引用传递出去（“this”引用逃逸是很危险的，其他的线程很可能通过该引用访问到只“初始化一半”的对象），那么其他线程就可以看到final变量的值。
+	* 3>有序性：
+		* 对于一个线程的代码而言，我们总是以为代码的执行是从前往后的，依次执行的。
+			* 这么说不能说完全不对，在单线程程序里，确实会这样执行；但是在多线程并发时，程序的执行就有可能出现乱序。
+			* 用一句话可以总结为：在本线程内观察，操作都是有序的；如果在一个线程中观察另外一个线程，所有的操作都是无序的。前半句是指“线程内表现为串行语义（WithIn Thread As-if-Serial Semantics）”,后半句是指“指令重排”现象和“工作内存和主内存同步延迟”现象。
+		* Java提供了两个关键字volatile和synchronized来保证多线程之间操作的有序性,
+			* volatile关键字本身通过加入内存屏障来禁止指令的重排序，
+			* 而synchronized关键字通过一个变量在同一时间只允许有一个线程对其进行加锁的规则来实现，
+		* 在单线程程序中，不会发生“指令重排”和“工作内存和主内存同步延迟”现象，只在多线程程序中出现。
+
+* 4)happens-before原则：(以前发生过)
+	* Java内存模型中定义的两项操作之间的次序关系，如果说操作A先行发生于操作B，操作A产生的影响能被操作B观察到，<u>“影响”包含了修改了内存中共享变量的值、发送了消息、调用了方法等</u>。
+	* 下面是Java内存模型下一些"天然的"happens-before关系，这些happens-before关系无须任何同步器协助就已经存在，可以在编码中直接使用。如果两个操作之间的关系不在此列，并且无法从下列规则推导出来的话，它们就没有顺序性保障，虚拟机可以对它们进行随意地重排序。
+		* a.程序次序规则(Pragram Order Rule)：在一个线程内，按照程序代码顺序，书写在前面的操作先行发生于书写在后面的操作。准确地说应该是控制流顺序而不是程序代码顺序，因为要考虑分支、循环结构。
+		* b.管程锁定规则(Monitor Lock Rule)：一个unlock操作先行发生于后面对同一个锁的lock操作。这里必须强调的是同一个锁，而”后面“是指时间上的先后顺序。
+		* c.volatile变量规则(Volatile Variable Rule)：对一个volatile变量的写操作先行发生于后面对这个变量的读取操作，这里的”后面“同样指时间上的先后顺序。
+		* d.线程启动规则(Thread Start Rule)：Thread对象的start()方法先行发生于此线程的每一个动作。
+		* e.线程终于规则(Thread Termination Rule)：线程中的所有操作都先行发生于对此线程的终止检测，我们可以通过Thread.join()方法结束，Thread.isAlive()的返回值等作段检测到线程已经终止执行。
+		* f.线程中断规则(Thread Interruption Rule)：对线程interrupt()方法的调用先行发生于被中断线程的代码检测到中断事件的发生，可以通过Thread.interrupted()方法检测是否有中断发生。
+		* g.对象终结规则(Finalizer Rule)：一个对象初始化完成(构造方法执行完成)先行发生于它的finalize()方法的开始。
+		* g.传递性(Transitivity)：如果操作A先行发生于操作B，操作B先行发生于操作C，那就可以得出操作A先行发生于操作C的结论。
+	* 一个操作”时间上的先发生“不代表这个操作会是”先行发生“，那如果一个操作”先行发生“是否就能推导出这个操作必定是”时间上的先发生 “呢？也是不成立的，一个典型的例子就是指令重排序。所以时间上的先后顺序与happens-before原则之间基本没有什么关系，所以衡量并发安全问题一切必须以happens-before 原则为准。
 
 
 
