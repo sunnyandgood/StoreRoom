@@ -1628,7 +1628,7 @@ public class TestVariable {
 
 ### 77.try语句块与return
 
-* try语句块里有一个return语句，那么跟在这个try后的finally语句块里的代码会不会执行？什么时候被执行？在return前还是后？
+* 1)try语句块里有一个return语句，那么跟在这个try后的finally语句块里的代码会不会执行？什么时候被执行？在return前还是后？
   ```java
   package com.edu.test.faceTest;
   
@@ -1664,7 +1664,7 @@ public class TestVariable {
     <div align="center"><img src="./img/019.png"/></div>
 
 
-* 关于返回值：如果try语句里有return，返回的是try语句块中变量值。 详细执行过程如下：
+* 2)关于返回值：如果try语句里有return，返回的是try语句块中变量值。 详细执行过程如下：
 	* 如果有返回值，就把返回值保存到局部变量中；
 	* 执行jsr指令跳到finally语句里执行；
 	* 执行完finally语句后，返回之前保存在局部变量表里的值。
