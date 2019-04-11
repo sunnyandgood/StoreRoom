@@ -620,26 +620,32 @@ class Person{
   - 3)检查到异常出现，提示用户操作有错误。
 - Java异常类层次结构图
    <div align="center"><img src="./img/006.png"/></div>
+   - Java异常
 
-   * 在 Java 中，所有的异常都有一个共同的祖先java.lang包中的 Throwable类。Throwable： 有两个重要的子类：Exception（异常） 和 Error（错误） ，二者都是 Java 异常处理的重要子类，各自都包含大量子类。
-   * Error（错误）:是程序无法处理的错误，表示运行应用程序中较严重问题。大多数错误与代码编写者执行的操作无关，而表示代码运行时 JVM（Java 虚拟机）出现的问题。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。
+     - Error：表示应用程序本身无法恢复的一种严重问题；比如：内存溢出、系统问题
+     - Exception：
+       - 运行时异常：开发人员编码所引发的问题；如：NullPointerException、ArrayIndexOutOfBoundsException、by Zero算术异常；也叫做**Uncharted异常**。
+       - 普通异常：编辑时需要手动try catch处理或运行环境变化所导致；如：网络连接失败、硬盘空间不够；也叫**checked异常**。
+
+   - 在 Java 中，所有的异常都有一个共同的祖先java.lang包中的 Throwable类。Throwable： 有两个重要的子类：Exception（异常） 和 Error（错误） ，二者都是 Java 异常处理的重要子类，各自都包含大量子类。
+   - Error（错误）:是程序无法处理的错误，表示运行应用程序中较严重问题。大多数错误与代码编写者执行的操作无关，而表示代码运行时 JVM（Java 虚拟机）出现的问题。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。
 
      * 这些错误表示故障发生于虚拟机自身、或者发生在虚拟机试图执行应用时，如Java虚拟机运行错误（Virtual MachineError）、类定义错误（NoClassDefFoundError）等。这些错误是不可查的，因为它们在应用程序的控制和处理能力之 外，而且绝大多数是程序运行时不允许出现的状况。对于设计合理的应用程序来说，即使确实发生了错误，本质上也不应该试图去处理它所引起的异常状况。在 Java中，错误通过Error的子类描述。
 
-   * Exception（异常）:是程序本身可以处理的异常。Exception 类有一个重要的子类 RuntimeException。
+   - Exception（异常）:是程序本身可以处理的异常。Exception 类有一个重要的子类 RuntimeException。
 
      * RuntimeException 异常由Java虚拟机抛出。NullPointerException（要访问的变量没有引用任何对象时，抛出该异常）、ArithmeticException（算术运算异常，一个整数除以0时，抛出该异常）和 ArrayIndexOutOfBoundsException （下标越界异常）。
 
-   * 注意：异常和错误的区别：异常能被程序本身可以处理，错误是无法处理。
-   * Throwable类常用方法
+   - 注意：异常和错误的区别：异常能被程序本身可以处理，错误是无法处理。
+   - Throwable类常用方法
      ```java
      public string getMessage():返回异常发生时的详细信息
-
+     
      public string toString():返回异常发生时的简要描述
-
+     
      public string getLocalizedMessage():返回异常对象的本地化信息。使用Throwable的子类覆盖这个方法，可以声称本地化信息。
-   									  如果子类没有覆盖该方法，则该方法返回的信息与getMessage（）返回的结果相同
-
+     								  如果子类没有覆盖该方法，则该方法返回的信息与getMessage（）返回的结果相同
+     
      public void printStackTrace():在控制台上打印Throwable对象封装的异常信息
      ```
 
@@ -1699,14 +1705,23 @@ public class TestVariable {
 	* 如果有返回值，就把返回值保存到局部变量中；
 	* 执行jsr指令跳到finally语句里执行；
 	* 执行完finally语句后，返回之前保存在局部变量表里的值。
-	* 如果try，finally语句里均有return，忽略try的return，而使用finally的return.
-
-
-
+	* 如果try，finally语句里均有return，忽略try的return，而使用finally的return
 
 ### 78.在java中，String被设计成final类，那为什么平时使用时，String的值可以被改变呢？
 
 * 字符串常量池是java堆内存中一个特殊的存储区域，当我们建立一个String对象时，假设常量池不存在该字符串，则创建一个，若存在则直接引用已经存在的字符串。当我们对String对象值改变的时候，例如 String a="A"; a="B" 。a是String对象的一个引用（我们这里所说的String对象其实是指字符串常量），当a=“B”执行时，**并不是原本String对象("A")发生改变，而是创建一个新的对象("B")，令a引用它**。
+
+### 79.List、Set、Map三者的区别？
+- 类结构：
+
+  - List和Set来自Collection接口
+  - Map是顶级接口
+- 元素重复、顺序：
+  - List：元素可以重复，可以添加空值，有序的，可以根据下标存取
+  - Set：元素不可以重复，允许有一个空值，无序的
+  - Map：Key，Value存储，key可以有一个null值，value可以存在多个空值，默认无序。
+
+### 80.说出ArrayList、LinkedList、Vector的存储性能和特性
 
 
 
