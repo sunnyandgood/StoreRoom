@@ -1504,7 +1504,7 @@ public class TestVariable {
   ```
 
 * 题目二：
-  ```
+  ```java
   package com.edu.test.faceTest;
   
   /**
@@ -1723,7 +1723,7 @@ public class TestVariable {
 
 ### 80.说出ArrayList、LinkedList、Vector的存储性能和特性
 
-
+- 
 
 
 
