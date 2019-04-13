@@ -945,13 +945,15 @@ public class Hashtable<K,V>
 }
 ```
 * 1)**HashTable基于Dictionary类，而HashMap是基于AbstractMap**。
-	* Dictionary是任何可将键映射到相应值的类的抽象父类，
-	* 而AbstractMap是基于Map接口的实现，它以最大限度地减少实现此接口所需的工作。
+  * Dictionary是任何可将键映射到相应值的类的抽象父类，
+  * 而AbstractMap是基于Map接口的实现，它以最大限度地减少实现此接口所需的工作。
 * 2)**HashMap的key和value都允许为null，而Hashtable的key和value都不允许为null**。
-	* HashMap遇到key为null的时候，调用putForNullKey方法进行处理，而对value没有处理；
-	* Hashtable遇到null，直接返回NullPointerException。
+  * HashMap遇到key为null的时候，调用putForNullKey方法进行处理，而对value没有处理；
+  * Hashtable遇到null，直接返回NullPointerException。
 * 3)**Hashtable是同步的，而HashMap是非同步的**，
-	* 但是我们也可以通过Collections.synchronizedMap(hashMap),使其实现同步。
+  * 但是我们也可以通过Collections.synchronizedMap(hashMap),使其实现同步。
+* 4)容量
+	* 
 * HashTable线程安全（默认大小11，扩容为原容量2倍+1）;但是速度慢，不允许key/value为null,加载因子为0.75：即当 元素个数 超过 容量长度的0.75倍 时，进行扩容。
 * HashMap线程不安全（默认大小16，扩容为原容量的一倍）；允许key/value为null；加载因子为0.75：即当 元素个数超过 容量长度的0.75倍时， 进行扩容；长度始终保持2的n次方， 如果不需要对数据进行排序选用HashMap
 
@@ -1064,7 +1066,7 @@ public class LinkedHashMap<K,V>
 * ArrayList是基于数组实现，LinkedList是基于链表实现;
 * ArrayList在查找时速度快，LinkedList在插入与删除时更具优势;
 * ArrayList线程不安全（默认大小10，扩容为原容量0.5倍）；查询速度快，底层数据结构是数组结构
-* LinkedList线程不安全（没有初始化大小，也没有扩容的机制）便于插入、删除；以 Entry对象为节点，实现了双向链表；
+* LinkedList线程不安全（没有初始化大小，也没有扩容的机制）便于插入、删除；以 Node对象为节点，实现了双向链表；
 
 ### 58.volatile关键字
 * volatile关键字强制从公共堆栈获取变量值，而不是从线程私有数据栈获取数据。
@@ -1700,7 +1702,6 @@ public class TestVariable {
 
     <div align="center"><img src="./img/019.png"/></div>
 
-
 * 2)关于返回值：如果try语句里有return，返回的是try语句块中变量值。 详细执行过程如下：
 	* 如果有返回值，就把返回值保存到局部变量中；
 	* 执行jsr指令跳到finally语句里执行；
@@ -1708,23 +1709,54 @@ public class TestVariable {
 	* 如果try，finally语句里均有return，忽略try的return，而使用finally的return
 
 ### 78.在java中，String被设计成final类，那为什么平时使用时，String的值可以被改变呢？
-
 * 字符串常量池是java堆内存中一个特殊的存储区域，当我们建立一个String对象时，假设常量池不存在该字符串，则创建一个，若存在则直接引用已经存在的字符串。当我们对String对象值改变的时候，例如 String a="A"; a="B" 。a是String对象的一个引用（我们这里所说的String对象其实是指字符串常量），当a=“B”执行时，**并不是原本String对象("A")发生改变，而是创建一个新的对象("B")，令a引用它**。
 
 ### 79.List、Set、Map三者的区别？
-- 类结构：
+<div align="center"><img src="./img/020.png"/></div>
 
+- 类结构：
   - List和Set来自Collection接口
   - Map是顶级接口
-- 元素重复、顺序：
-  - List：元素可以重复，可以添加空值，有序的，可以根据下标存取
-  - Set：元素不可以重复，允许有一个空值，无序的
-  - Map：Key，Value存储，key可以有一个null值，value可以存在多个空值，默认无序。
+- 元素重复：
+  - List：元素可以重复，可以添加空值；
+  - Set：元素不可以重复，允许有一个空值；
+  - Map：Key，Value存储，key可以有一个null值，value可以存在多个空值。
+- 元素顺序：
+	- List：有序的，可以根据下标存取
+	- Set：无序
+	- Map：默认无序
 
 ### 80.说出ArrayList、LinkedList、Vector的存储性能和特性
 
-- 
-
+- 结构见知识点79的图；
+  - ArrayList和Vector都继承自AbstractList类；
+  - 而LinkedList继承自AbstractSequentialList类并实现了Deque接口；
+  - AbstractSequentialList继承自AbstractList；而AbstractList实现了List接口；
+  - Deque接口继承自Queue接口；
+  - Queue接口和List接口都继承自Collection接口。
+- Vector：
+  - 线程安全，同步的；
+  - 默认大小10，扩容为原容量的一倍；
+  - 加载因子为1：即当元素 个数 超过 容量 长度时，进行扩容；
+  - 速度慢；
+  - 底层数据结构是**数组**结构；
+  - 可以通过下标访问，实现了RandomAccess接口，可以随机访问；
+- ArrayList：
+  - 线程不安全，非同步的；
+  - 默认大小10，扩容为原容量0.5倍；当刚创建时容量为0，在第一次向里边添加元素时容量变为10。
+  - 查询速度快（利于遍历查询，不利于插入删除）；
+  - 底层数据结构是**数组**结构，数组的增强版本；
+  - 可以通过下标访问，实现了RandomAccess接口，可以随机访问；
+- LinkedList：
+  - 线程不安全，非同步的；
+  - 没有初始化大小，也没有扩容的机制；
+  - 便于插入、删除（不利于遍历查询），Node与Node之间存在指向关系；
+  - 以 Node对象为节点，实现了**双向链表**；
+  - 通过节点访问，继承了AbstractSequentialList类，做有次序访问，里面采用迭代器实现；
+- 总结：
+  - 做查询量比较大的操作，首选**ArrayList**和Vector；
+  - 当要求线程安全则选择**Vector**，否则选择ArrayList；
+  - 做插入量比较大的操作，首选**LinkedList**，插入效率高，但不利于查询；
 
 
 
