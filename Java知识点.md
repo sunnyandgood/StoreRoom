@@ -950,12 +950,16 @@ public class Hashtable<K,V>
 * 2)**HashMap的key和value都允许为null，而Hashtable的key和value都不允许为null**。
   * HashMap遇到key为null的时候，调用putForNullKey方法进行处理，而对value没有处理；
   * Hashtable遇到null，直接返回NullPointerException。
-* 3)**Hashtable是同步的，而HashMap是非同步的**，
+* 3)**Hashtable是同步的，而HashMap是非同步的**（在多线程情况下不推荐使用，可能会出现问题）。
   * 但是我们也可以通过Collections.synchronizedMap(hashMap),使其实现同步。
 * 4)容量
-	* 
-* HashTable线程安全（默认大小11，扩容为原容量2倍+1）;但是速度慢，不允许key/value为null,加载因子为0.75：即当 元素个数 超过 容量长度的0.75倍 时，进行扩容。
-* HashMap线程不安全（默认大小16，扩容为原容量的一倍）；允许key/value为null；加载因子为0.75：即当 元素个数超过 容量长度的0.75倍时， 进行扩容；长度始终保持2的n次方， 如果不需要对数据进行排序选用HashMap
+  * HashTable：默认大小11（素数），扩容为原容量2倍+1；加载因子为0.75：**效率低**；
+  * HashMap：默认大小16（合数），扩容为原容量的一倍；加载因子为0.75：**效率高**；
+* 5)结构
+  * HashTable：**数组+链表+红黑树**
+  * HashMap：数组+链表
+* HashTable线程安全（默认大小11（素数），扩容为原容量2倍+1）;但是速度慢，不允许key/value为null,加载因子为0.75：即当 元素个数 超过 容量长度的0.75倍 时，进行扩容；加锁（效率低）；底层是链表数组。
+* HashMap线程不安全（默认大小16（合数），扩容为原容量的一倍）；允许key/value为null；加载因子为0.75：即当 元素个数超过 容量长度的0.75倍时， 进行扩容；长度始终保持2的n次方，效率高； 如果不需要对数据进行排序选用HashMap
 
 ### 51.ConcurrentHashMap的工作原理?
 ```java
@@ -969,11 +973,17 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
 }
 ```
 * jdk 1.6版: ConcurrenHashMap可以说是HashMap的升级版，**ConcurrentHashMap是线程安全的**，但是与Hashtablea相比，实现线程安全的方式不同。
-	* Hashtable是通过对hash表结构进行锁定，是**阻塞式**的，当一个线程占有这个锁时，其他线程必须阻塞等待其释放锁。
-	* ConcurrentHashMap是采用**分离锁的方式**，它并没有对整个hash表进行锁定，而是局部锁定，也就是说当一个线程占有这个局部锁时，不影响其他线程对hash表其他地方的访问。
-	* **具体实现**: ConcurrentHashMap内部有一个Segment数组, 该Segment对象可以充当锁。Segment对象内部有一个HashEntry数组，于是每个Segment可以守护若干个桶(HashEntry),每个桶又有可能是一个HashEntry连接起来的链表，存储发生碰撞的元素
-	* 每个ConcurrentHashMap在默认并发级下会创建包含**16个Segment对象的数组**，每个数组有若干个桶，当我们进行put方法时，通过hash方法对key进行计算，得到hash值，找到对应的segment，然后对该segment进行加锁，然后调用segment的put方法进行存储操作，此时其他线程就不能访问当前的segment，但可以访问其他的segment对象，不会发生阻塞等待。
+  * Hashtable是通过对hash表结构进行锁定，是**阻塞式**的，当一个线程占有这个锁时，其他线程必须阻塞等待其释放锁。
+  * ConcurrentHashMap是采用**分离锁的方式**，它并没有对整个hash表进行锁定，而是局部锁定，也就是说当一个线程占有这个局部锁时，不影响其他线程对hash表其他地方的访问。
+  * **具体实现**: ConcurrentHashMap内部有一个Segment数组, 该Segment对象可以充当锁。Segment对象内部有一个HashEntry数组，于是每个Segment可以守护若干个桶(HashEntry),每个桶又有可能是一个HashEntry连接起来的链表，存储发生碰撞的元素
+  * 每个ConcurrentHashMap在默认并发级下会创建包含**16个Segment对象的数组**，每个数组有若干个桶，当我们进行put方法时，通过hash方法对key进行计算，得到hash值，找到对应的segment，然后对该segment进行加锁，然后调用segment的put方法进行存储操作，此时其他线程就不能访问当前的segment，但可以访问其他的segment对象，不会发生阻塞等待。
 * jdk 1.8版 在jdk 8中，ConcurrentHashMap不再使用Segment分离锁，而是采用一种乐观锁CAS算法来实现同步问题，但其底层还是“**数组+链表->红黑树**”的实现。
+* ConcurrentHashMap中的get、clear都是弱一致性的；
+	* 数据添加进去后，调用get方法获取数据，不一定能够马上get出来数据。
+* **HashMap与ConcurrentHashMap的区别**
+  * 包路径
+    * HashMap：在`java.util`包下;
+    * ConcurrentHashMap：在`java.util.current`包下；解决多线程下的安全和效率问题，是jdk1.5提出的新概念，在jdk1.8之前是采用分段锁技术，在jdk1.8之后就废除了分段锁技术采用一种乐观锁CAS算法来实现同步问题；
 
 ### 52.遍历一个List有哪些不同的方式？
 ```java
@@ -1041,6 +1051,12 @@ public class TestHashSet {
 ```
 * 通过看源码知道**HashSet的实现是依赖于HashMap的**，HashSet的值都是存储在HashMap中的。在HashSet的构造法中会初始化一个HashMap对象，**HashSet不允许值重复**，因此，**HashSet的值是作为HashMap的key存储在HashMap中**的，当存储的值已经存在时返回false。
 * HashSet线程不安全（默认大小16，扩容为原容量的一倍）;存取速度快,底层实现是一个HashMap（保存数据），实现Set接口,加载因子为0.75：即当 元素个数 超过 容量长度的0.75倍 时，进行扩容；如果不需要对数据进行排序选用HashSet。
+* HashSet和HashMap的区别：
+	* 
+* HashSet如何保证不重复？
+	* 底层由HashMap实现，**采用HashMap的key（HashMap的key不可重复）做到去重**，HashMap的value统一由Object对象`PERSENT`,HashSet只用HashMap的key即可。
+
+
 
 ### 56.LinkedHashMap的实现原理?
 ```java
@@ -1758,15 +1774,175 @@ public class TestVariable {
   - 当要求线程安全则选择**Vector**，否则选择ArrayList；
   - 做插入量比较大的操作，首选**LinkedList**，插入效率高，但不利于查询；
 
+### 81.Iterator是什么？为什么有remove方法而没有add方法？
+```java
+package java.util;
 
+import java.util.function.Consumer;
 
+public interface Iterator<E> {
+    boolean hasNext();
 
+    E next();
 
+    default void remove() {
+        throw new UnsupportedOperationException("remove");
+    }
 
+    default void forEachRemaining(Consumer<? super E> action) {
+        Objects.requireNonNull(action);
+        while (hasNext())
+            action.accept(next());
+    }
+}
+```
 
+- Iterator是迭代器，作用于所有集合。
 
+- 因为Iterator作用于所有的集合，但是有些集合是无序的，在迭代过程中无法找到可以存放数据的地方，所以Iterator接口中不能有add方法，可以有remove方法。
 
+  ```java
+  package com.edu.test.faceTest;
+  
+  import java.util.*;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/13 21:36
+   */
+  public class TestIterator {
+      /**
+       * 为什么Iterator有remove方法而没有add方法？
+       * 因为Iterator作用于所有的集合，但是有些集合是无序的，你在遍历时给它加到哪里？
+       *
+       * //思考：有没有知道数据结构的前提下，给它整一个add方法？
+       *        ListIterator就是为此而生，只作用于List集合
+       * @param args
+       */
+      public static void main(String[] args) {
+          //链表
+          LinkedList<String> linkedList = new LinkedList<>();
+          linkedList.add("");
+          /**
+           * public boolean add(E e) {
+           *      linkLast(e);
+           *      return true;
+           * }
+           */
+          Iterator<String> iterator1 = linkedList.iterator();
+          while (iterator1.hasNext()){
+              String next = iterator1.next();
+              //一般在遍历时，想要移除数据，一般采用迭代器
+              iterator1.remove();
+          }
+  
+          //用Map实现
+          HashSet<String> set = new HashSet<>();
+          set.add("");
+          /**
+           * public boolean add(E e) {
+           *     return map.put(e, PRESENT)==null;
+           * }
+           * put方法把数据放到Map里边去，在迭代过程中无法找到可以存放数据的地方，
+           * 所以Iterator接口中不能有add方法，可以有remove方法。
+           */
+          Iterator<String> iterator2 = set.iterator();
+          while (iterator2.hasNext()){
+              String next = iterator2.next();
+  
+          }
+  
+          //数组实现
+          ArrayList<String> arrayList = new ArrayList<>();
+          arrayList.add("");
+          /**
+           * public boolean add(E e) {
+           *     ensureCapacityInternal(size + 1);  // Increments modCount!!
+           *     elementData[size++] = e;
+           *     return true;
+           * }
+           */
+          Iterator<String> iterator3 = arrayList.iterator();
+          while (iterator3.hasNext()){
+              String next = iterator3.next();
+  
+          }
+      }
+  }
+  ```
 
+### 82.思考：有没有知道数据结构的前提下，给它整一个add方法？
+* ListIterator就是为此而生，只作用于List集合。
+  ```java
+  package java.util;
+  
+  public interface ListIterator<E> extends Iterator<E> {
+      // Query Operations
+  
+      boolean hasNext();
+  
+      E next();
+  
+      boolean hasPrevious();
+  
+      E previous();
+  
+      int nextIndex();
+  
+      int previousIndex();
+  
+      // Modification Operations
+  
+      void remove();
+  
+      void set(E e);
+  
+      void add(E e);
+  }
+  ```
+
+### 83.Iterator与Iterable的区别
+- Iterable的able可以翻译为一种能力；Iterator源码见知识点81；Iterable源码见下边。
+
+- Iterable里边维护的是一个Iterator，因此应该先有Iterator再有Iterable。
+
+- Iterable是集合（Collection）的顶级接口。因此Collection所有的子类都具有返回Iterator的能力。
+
+- Iterator：负责结构的数据迭代（jdk1.2引入的）；
+
+- Iterable：表示数据结构具有迭代的能力（jdk1.5引入的）；但是并非没有Iterable数据结构就不能拥有迭代的能力了，还是可以通过其他的方式使用Iterator来达到迭代的目的的。
+
+- 为什么要引入Iterable？
+
+  ```java
+  package java.lang;
+  
+  import java.util.Iterator;
+  import java.util.Objects;
+  import java.util.Spliterator;
+  import java.util.Spliterators;
+  import java.util.function.Consumer;
+  
+  public interface Iterable<T> {
+      /**
+       * Returns an iterator over elements of type {@code T}.
+       *
+       * @return an Iterator.
+       */
+      Iterator<T> iterator();
+  
+      default void forEach(Consumer<? super T> action) {
+          Objects.requireNonNull(action);
+          for (T t : this) {
+              action.accept(t);
+          }
+      }
+  
+      default Spliterator<T> spliterator() {
+          return Spliterators.spliteratorUnknownSize(iterator(), 0);
+      }
+  }
+  ```
 
 
 
