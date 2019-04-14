@@ -1001,19 +1001,27 @@ while(it.hasNext()) {
 ```
 
 ### 53.fail-fast与fail-safe有什么区别？
-* Iterator的fail-fast属性与当前的集合共同起作用，因此它不会受到集合中任何改动的影响。
-* Java.util包中的所有集合类都被设计为fail-fast的，
-* 而java.util.concurrent中的集合类都为fail-safe的。
-* 当检测到正在遍历的集合的结构被改变时，
-	* fail-fast迭代器抛出ConcurrentModificationException，
-	* 而fail-safe迭代器从不抛出ConcurrentModificationException。
+- 在迭代器迭代的时候，不能对该数据进行修改，如果数据发生更改，就造成了我们迭代出来的数据不一致；
+- fail-fast（**快速失败**）是一种检测机制；fail-safe（**安全失败**）
+- 标志：
+  - modCount：集合被更新的次数；
+  - exceptModCount：做个标记，迭代器中的修改次数标记（迭代器中自己声明的标志）；
+- Iterator的fail-fast属性与当前的集合共同起作用，因此它不会受到集合中任何改动的影响。
+- fail-fast与fail-safe使用的地方：
+	- Java.util包中的所有集合类都被设计为fail-fast的（java.util下集合框架中使用Iterator迭代器，都是采用fail-fast），**更改的数据为本身的数据**。
+	- java.util.concurrent中的集合类都为fail-safe的。**更改的数据为副本**，占用的空间比较大，还有时效性（得更改完成后遍历的才是新数据）。
+  	- 在多线程情况下，如果一个线程在迭代该数据，另外一个线程在更改该数据，如果使用Iterator，就会造成modCount和exceptModCount不一致；
+  	- 更多情况下，不建议直接去修改，如果有这种程序代码，建议更改成fail-safe。
+- 当检测到正在遍历的集合的结构被改变时，
+  - fail-fast迭代器抛出ConcurrentModificationException，
+  - fail-safe迭代器从不抛出ConcurrentModificationException（**可以使用java.util.concurrent中的集合类避免ConcurrentModificationException**）。
 
-### 54.Array和ArrayList有何区别？什么时候更适合用Array？
+### 54-1.Array和ArrayList有何区别？什么时候更适合用Array？
 * Array可以容纳基本类型和对象，而ArrayList只能容纳对象。
 * Array是指定大小的，而ArrayList大小是可变的。
 * ArrayList线程不安全（默认大小10，扩容为原容量0.5倍）；查询速度快，底层数据结构是数组结构；当刚创建时容量为0，在第一次向里边添加元素时容量变为10。
 
-### 54.哪些集合类提供对元素的随机访问？
+### 54-2.哪些集合类提供对元素的随机访问？
 * ArrayList、HashMap、TreeMap和HashTable类提供对元素的随机访问。
 
 ### 55.HashSet的底层实现是什么?
@@ -1779,7 +1787,10 @@ public class TestVariable {
 package java.util;
 
 import java.util.function.Consumer;
-
+/**
+ * @author  Lee Boynton
+ * @since   JDK1.2
+ */
 public interface Iterator<E> {
     boolean hasNext();
 
@@ -1798,9 +1809,7 @@ public interface Iterator<E> {
 ```
 
 - Iterator是迭代器，作用于所有集合。
-
 - 因为Iterator作用于所有的集合，但是有些集合是无序的，在迭代过程中无法找到可以存放数据的地方，所以Iterator接口中不能有add方法，可以有remove方法。
-
   ```java
   package com.edu.test.faceTest;
   
@@ -1903,17 +1912,124 @@ public interface Iterator<E> {
 
 ### 83.Iterator与Iterable的区别
 - Iterable的able可以翻译为一种能力；Iterator源码见知识点81；Iterable源码见下边。
-
 - Iterable里边维护的是一个Iterator，因此应该先有Iterator再有Iterable。
-
 - Iterable是集合（Collection）的顶级接口。因此Collection所有的子类都具有返回Iterator的能力。
+- 区别：
+	- Iterator：负责结构的**数据迭代**（jdk1.2引入的）；
+	- Iterable：**表示数据结构具有迭代的能力（使代码规范）**（jdk1.5引入的）；但是并非没有Iterable数据结构就不能拥有迭代的能力了，还是可以通过其他的方式使用Iterator来达到迭代的目的的。
+- 为什么要引入Iterable？**使代码规范**。
 
-- Iterator：负责结构的数据迭代（jdk1.2引入的）；
-
-- Iterable：表示数据结构具有迭代的能力（jdk1.5引入的）；但是并非没有Iterable数据结构就不能拥有迭代的能力了，还是可以通过其他的方式使用Iterator来达到迭代的目的的。
-
-- 为什么要引入Iterable？
-
+  - 因为Collection是数据结构（集合）的顶级接口，数据结构需要进行迭代；Collection被赋予了迭代的能力，下级的数据结构就能实现它，并返回一个Iterator实例；
+  - 在使用过程中就可以通过调用数据结构的Iterator方法（这个方法是Iterable接口赋予的）返回一个Iterator实例；然后根据这个实例进行迭代，所有数据结构的迭代效果都是一样的，重点就是在返回实例里边做了什么事，它根据自己的数据结构定义了一个类，然后根据自己的数据结构来进行遍历。
+  
+  ```java
+  package com.edu.test.faceTest;
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/13 22:36
+   */
+  public class TestIterable {
+      public static void main(String[] args) {
+          //ArrayList的模拟结构
+          ListTest listTest = new ListTest();
+          listTest.add("");
+          TestAtor iteratorList = listTest.testAtor();
+          while (iteratorList.hasNext()){
+              iteratorList.next();
+              iteratorList.remove();
+          }
+  
+          //HashSet的模拟结构
+          SetTest setTest = new SetTest();
+          setTest.add("");
+          TestAtor iteratorSet = setTest.testAtor();
+          while (iteratorSet.hasNext()){
+              iteratorSet.next();
+              iteratorSet.remove();
+          }
+      }
+  }
+  
+  //模拟Iterable
+  interface TestAble{
+      TestAtor testAtor();
+  }
+  
+  interface TestAtor{
+      boolean hasNext();
+  
+      Object next();
+  
+      void remove();
+  }
+  
+  //数据结构的顶级接口，继承了TestAtor
+  interface CollTest extends TestAble{
+      boolean add(Object o);
+  }
+  
+  //声明两种不同的数据结构，来模拟Set和List
+  class SetTest implements CollTest{
+  
+      @Override
+      public TestAtor testAtor() {
+          return new TestAtor() {
+              @Override
+              public boolean hasNext() {
+                  //根据自己的数据结构进行定义遍历下一个元素的方法
+                  return false;
+              }
+  
+              @Override
+              public Object next() {
+                  //根据自己的数据结构确认有没有下一个元素
+                  return null;
+              }
+  
+              @Override
+              public void remove() {
+  
+              }
+          };
+      }
+  
+      @Override
+      public boolean add(Object o) {
+          return false;
+      }
+  }
+  
+  class ListTest implements CollTest{
+  
+      @Override
+      public TestAtor testAtor() {
+          return new TestAtor() {
+              @Override
+              public boolean hasNext() {
+                  //根据自己的数据结构进行定义遍历下一个元素的方法
+                  return false;
+              }
+  
+              @Override
+              public Object next() {
+                  //根据自己的数据结构确认有没有下一个元素
+                  return null;
+              }
+  
+              @Override
+              public void remove() {
+  
+              }
+          };
+      }
+  
+      @Override
+      public boolean add(Object o) {
+          return false;
+      }
+  }
+  ```
+- Iterable源码：
   ```java
   package java.lang;
   
@@ -1922,7 +2038,9 @@ public interface Iterator<E> {
   import java.util.Spliterator;
   import java.util.Spliterators;
   import java.util.function.Consumer;
-  
+  /**
+   * @since   JDK1.5
+   */
   public interface Iterable<T> {
       /**
        * Returns an iterator over elements of type {@code T}.
@@ -1944,14 +2062,256 @@ public interface Iterator<E> {
   }
   ```
 
+### 84.Enumeration是什么？和Iterator接口的差别？
+```java
+package java.util;
+
+/**
+ * @author  Lee Boynton
+ * @since   JDK1.0
+ */
+public interface Enumeration<E> {
+    boolean hasMoreElements();
+    E nextElement();
+}
+```
+
+- Enumeration是什么？
+  - Enumeration：枚举，一个举例拿出来，迭代的意思；
+  - Verctor和Hashtable都实现了Enumeration枚举功能；
+- Enumeration和Iterator接口的差别：
+  - 出现时间：
+    - Enumeration：jdk1.0（老的），jdk1.5时对该类加入了枚举
+    - Iterator：jdk1.2
+  - Iterator中的方法比Enumeration中全面，且方法名缩减了。
+    - Enumeration中的方法：hasMoreElements、nextElement；没有实现fail-fast（快速失败）
+    - Iterator中的方法：hasNext、next、remove、forEachRemaining；实现了fail-fast（快速失败）
+  -  总结：Iterator后期的优势为了弥补Enumeration的不足（或者说用以优化Enumeration的操作）；Iterator中方法比Enumeration全面；他们方法的内部实现也不一样了；Enumeration现在基本不怎么使用了；因为Enumeration没有实现fail-fast（快速失败），所以Enumeration没有remove方法。
 
 
+   ```java
+   package com.edu.test.faceTest;
+   
+   import java.util.Enumeration;
+   import java.util.Hashtable;
+   import java.util.Iterator;
+   import java.util.Vector;
+   
+   /**
+    * @Author: 王仁洪
+    * @Date: 2019/4/14 10:59
+    */
+   public class TestIteratorEnumeration {
+       public static void main(String[] args) {
+           Vector<String> vector = new Vector<>();
+           Hashtable<String,String> hashtable = new Hashtable<>();
+   
+           Enumeration<String> vectorElements = vector.elements();
+           while (vectorElements.hasMoreElements()){
+               vectorElements.nextElement();
+           }
+           Iterator<String> vectorIterator = vector.iterator();
+           while (vectorIterator.hasNext()){
+               vectorIterator.next();
+               vectorIterator.remove();
+           }
+   
+           Enumeration<String> hashTableElements = hashtable.elements();
+           while (hashTableElements.hasMoreElements()){
+               hashTableElements.nextElement();
+           }
+           //hashtable没有iterator方法
+       }
+   }
+   ```
+
+### 85.为什么推荐使用Iterator的remove方法？
+
+- 以ArrayList为例分析：
+  - modCount：集合被更新的次数；
+  - exceptModCount：做个标记，迭代器中的修改次数标记；
+  - 如果exceptModCount和modCount不相等则一定会触发ConcurrentModificationException异常。
+- forEach循环和迭代器（Iterator）有什么关系？为什么会触发ConcurrentModificationException异常？
+  - forEach是迭代器的简单实现；
+  - 在forEach中去移除元素后，会使Itr内部类中的next方法在执行过程中会触发checkForComodification方法，从而比较ArrayList中的modCount和迭代器中声明的exceptModCount标志是否相等，因为在ArrayList中采用remove方法去更改使得modCount加一了，而checkForComodification没有加一，从而使得modCount和checkForComodification不相等而抛出ConcurrentModificationException异常。
+
+  ```java
+  /**
+   * @since   1.2
+   */
+  public class ArrayList<E> extends AbstractList<E>
+          implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
+      transient Object[] elementData; // non-private to simplify nested class access
+      private int size;
+  
+      public Iterator<E> iterator() {
+          return new Itr();
+      }
+      /**
+       * An optimized version of AbstractList.Itr
+       */
+      private class Itr implements Iterator<E> {
+          int cursor;       // index of next element to return
+          int lastRet = -1; // index of last element returned; -1 if no such
+          int expectedModCount = modCount;
+  
+          public boolean hasNext() {
+              return cursor != size;
+          }
+  
+          @SuppressWarnings("unchecked")
+          public E next() {
+              checkForComodification();
+              int i = cursor;
+              if (i >= size)
+                  throw new NoSuchElementException();
+              Object[] elementData = java.util.ArrayList.this.elementData;
+              if (i >= elementData.length)
+                  throw new ConcurrentModificationException();
+              cursor = i + 1;
+              return (E) elementData[lastRet = i];
+          }
+  
+          public void remove() {
+              if (lastRet < 0)
+                  throw new IllegalStateException();
+              checkForComodification();
+  
+              try {
+                  java.util.ArrayList.this.remove(lastRet);
+                  cursor = lastRet;
+                  lastRet = -1;
+                  expectedModCount = modCount;
+              } catch (IndexOutOfBoundsException ex) {
+                  throw new ConcurrentModificationException();
+              }
+          }
+  
+          @Override
+          @SuppressWarnings("unchecked")
+          public void forEachRemaining(Consumer<? super E> consumer) {
+              Objects.requireNonNull(consumer);
+              final int size = java.util.ArrayList.this.size;
+              int i = cursor;
+              if (i >= size) {
+                  return;
+              }
+              final Object[] elementData = java.util.ArrayList.this.elementData;
+              if (i >= elementData.length) {
+                  throw new ConcurrentModificationException();
+              }
+              while (i != size && modCount == expectedModCount) {
+                  consumer.accept((E) elementData[i++]);
+              }
+              // update once at end of iteration to reduce heap write traffic
+              cursor = i;
+              lastRet = i - 1;
+              checkForComodification();
+          }
+  
+          final void checkForComodification() {
+              if (modCount != expectedModCount)
+                  throw new ConcurrentModificationException();
+          }
+      }
+  
+      private void fastRemove(int index) {
+          modCount++;
+          int numMoved = size - index - 1;
+          if (numMoved > 0)
+              System.arraycopy(elementData, index+1, elementData, index,
+                      numMoved);
+          elementData[--size] = null; // clear to let GC do its work
+      }
+      public boolean remove(Object o) {
+          if (o == null) {
+              for (int index = 0; index < size; index++)
+                  if (elementData[index] == null) {
+                      fastRemove(index);
+                      return true;
+                  }
+          } else {
+              for (int index = 0; index < size; index++)
+                  if (o.equals(elementData[index])) {
+                      fastRemove(index);
+                      return true;
+                  }
+          }
+          return false;
+      }
+  }
+  ```
+
+- 在移除某个集合中的元素时，应该这么做？**只能通过迭代器来实现移除**。
+
+  - 当使用forEach遍历时是通过list去移除数据的；
+  - 而使用迭代器是**通过迭代器去移除**的（在Iterator的实现类Itr中的remove方法中执行了`exceptModCount = modCount`）；
+
+      ```java
+      package com.edu.test.faceTest;
+      
+      import java.util.ArrayList;
+      import java.util.Iterator;
+      import java.util.List;
+      
+      /**
+       * @Author: 王仁洪
+       * @Date: 2019/4/14 11:29
+       */
+      public class TestForeachIterator {
+          public static void main(String[] args) {
+              List<String> list = new ArrayList<>();
+              list.add("aa");
+              list.add("bb");
+              list.add("cc");
+              list.add("dd");
+              list.add("ee");
+              System.out.println(list);
+              forEach(list);
+      //        iterator(list);
+              System.out.println(list);
+          }
+      
+          public static void forEach(List<String> list){
+              //如下代码移除可以吗？会触发java.util.ConcurrentModificationException异常
+              for (String str : list){
+                  if ("dd".equals(str)){//"dd"不会出问题，其他的都都会出问题
+                      list.remove(str);
+                  }
+              }
+          }
+      
+          public static void iterator(List<String> list){
+              //在移除集合中的元素时，应该这么做？只能通过迭代器来实现移除
+              Iterator<String> iterator = list.iterator();
+              while (iterator.hasNext()){
+                  String next = iterator.next();
+                  if ("aa".equals(next)){
+                      iterator.remove();
+                  }
+              }
+          }
+      }
+      ```
+
+### 86.Comparable与Comparator接口是什么？有何差别？
+- 相同点：功能都是**作比较，排序使用**;返回值（负整数, 零, 正整数）
+- 异同点：
+  - Comparable：内部比较器；`compareTo(T o);`通过参数，我们可以发现差异。
+  - Comparator：外部比较器;`compare(T o1, T o2);`
+- 比较之后，一般是做排序使用，sort方法就需要我们将要排序的对象拥有排序能力。
+- 使用：
+  - Comparable：自定义类实现Comparable接口并重写compareTo方法`return this.val-obj.val;`在使用时直接将集合对象传给sort方法。
+    - TreeMap：没有指定比较器的情况下，会按照TreeMap的内部方式排序；**TreeMap使用的时候，key一定要指定比较器**，不然会出现类转换异常`cannot be cast to java.lang.Comparable`。
+    - TreeSet：内部实现是TreeMap，没有指定比较器的情况下，会按照TreeMap的内部方式排序；
+  - Comparator：在使用时将集合对象和实现Comparator接口的类对象（可以使用匿名内部类实现compare方法）传给sort方法。
 
 
-
-
-
-
+### 87.队列和栈
+- 解释：队列和栈是数据结构
+  - 栈（Stack）JDK1.0：先进后出（FILO）后进先出（LIFO），通常叫做压栈；类似于往箱子里放衣服，最先进去的最后出；底层采用Vector实现。
+  - 队列（Queue）JDK1.5：企业中经常使用消息队列，流量1000万，但是服务器只能处理10万请求，将请求存储在队列消息服务器中；先进先出（FIFO）（也不全是）；第一个抢购的人进来，第一个出去，和火车进隧道一样。activeMQ
+  - 双端队列（Deque）JDK1.6：继承自Queue接口；可以先进先出（FIFO）也可以后进先出（LIFO）；**能够代替Stack**；
 
 
 
