@@ -1039,6 +1039,17 @@ class Person{
 
 
 ## 四、集合
+
+<div align="center"><img src="./img/Collection.png"/></div>
+----------------------
+<div align="center"><img src="./img/List.png"/></div>
+---------
+<div align="center"><img src="./img/Set.png"/></div>
+---------------
+<div align="center"><img src="./img/queue.png"/></div>
+-----------------
+<div align="center"><img src="./img/Map.png"/></div>
+
 ### 1.List、Set、Map三者的区别？
 
 <div align="center"><img src="./img/020.png"/></div>
