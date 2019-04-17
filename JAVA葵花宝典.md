@@ -258,6 +258,62 @@ public class MaxMinCommonDivisorMultiple {
 }
 ```
 
+### 17.如何将字符串反转?
+- 使用 StringBuilder 或者 stringBuffer 的 reverse() 方法。
+  ```java
+  // StringBuffer reverse
+  StringBuffer stringBuffer = new StringBuffer();
+  stringBuffer.append("abcdefg");
+  System.out.println(stringBuffer.reverse()); // gfedcba
+  
+  // StringBuilder reverse
+  StringBuilder stringBuilder = new StringBuilder();
+  stringBuilder.append("abcdefg");
+  System.out.println(stringBuilder.reverse()); // gfedcba
+  ```
+
+### 18.String 属于基础的数据类型吗？
+- String 不属于基础类型，而 String 属于对象。
+- 基础类型有 8 种：byte、boolean、char、short、int、float、long、double，
+
+### 19.String 类的常用方法都有那些？
+- indexOf()：返回指定字符的索引。
+- charAt()：返回指定索引处的字符。
+- replace()：字符串替换。
+- trim()：去除字符串两端空白。
+- split()：分割字符串，返回一个分割后的字符串数组。
+- getBytes()：返回字符串的 byte 类型数组。
+- length()：返回字符串长度。
+- toLowerCase()：将字符串转成小写字母。
+- toUpperCase()：将字符串转成大写字符。
+- substring()：截取字符串。
+- equals()：字符串比较。
+
+### 20.Files的常用方法都有哪些？
+- Files.exists()：检测文件路径是否存在。
+- Files.createFile()：创建文件。
+- Files.createDirectory()：创建文件夹。
+- Files.delete()：删除一个文件或目录。
+- Files.copy()：复制文件。
+- Files.move()：移动文件。
+- Files.size()：查看文件个数。
+- Files.read()：读取文件。
+- Files.write()：写入文件。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -582,7 +638,16 @@ public class TestVariable {
 - 因此，如果父类中只定义了有参数的构造方法，而在子类的构造方法中又没有用 super() 来调用父类中特定的构造方法，则编译时将发生错误，因为 Java 程序在父类中找不到没有参数的构造方法可供执行。
 - 解决办法是在父类里加上一个不做事且没有参数的构造方法(或在父类增加相应的带参数的构造方法)。
 
-### 21.接口和抽象类的区别是什么
+### 21-1.普通类和抽象类有哪些区别？
+- 普通类不能包含抽象方法，抽象类可以包含抽象方法。
+- 抽象类不能直接实例化，普通类可以直接实例化。
+
+### 21-2.接口和抽象类的区别是什么？
+- **实现**：抽象类的子类使用 extends 来继承；接口必须使用 implements 来实现接口。
+- **构造函数**：抽象类可以有构造函数；接口不能有。
+- **main 方法**：抽象类可以有 main 方法，并且我们能运行它；接口不能有 main 方法。
+- **实现数量**：类可以实现很多个接口；但是只能继承一个抽象类。
+- **访问修饰符**：接口中的方法默认使用 public 修饰；抽象类中的方法可以是任意访问修饰符。
 - 接口的方法**默认是 public**，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），抽象类可以有非抽象的方法,抽象类的成员函数可以是 private，protected 或者是 public 。
 - 接口中的实例变量**默认是 final 类型**的，而抽象类中则不一定,抽象类可以包含非 final 的变量。
 - 接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象（或者用内部类实现）；从设计层面来说：
@@ -593,6 +658,10 @@ public class TestVariable {
 - 类如果要实现一个接口，它必须要实现接口声明的所有方法。但是，类可以不实现抽象类声明的所有方法，当然，在这种情况下，类也必须得声明成是抽象的。
 - 抽象类可以在不提供接口方法实现的情况下实现接口。
   - 备注:在JDK8中，接口也可以定义静态方法，可以直接用接口名调用，实现类和实现是不可以调用的。如果同时实现两个接口，接口中定义了一样的默认方法，必须重写，不然会报错。
+
+### 21-3.抽象类能使用 final 修饰吗？
+- 不能，定义抽象类就是让其他类继承的，如果定义为 final 该类就不能被继承，这样彼此就会产生矛盾，所以 final 不能修饰抽象类，如下图所示，编辑器也会提示错误信息：
+<div align="center"><img src="./img/021.png"/></div>
 
 ### 22.接口是否可以继承接口？Java支持多继承么？如果不支持，如何实现?
 - **接口可以用extends继承接口，并且还可以多继承**。
@@ -660,6 +729,9 @@ public class TestVariable {
 
 ### `25.==` 与 equals(重要)
 - `==` : 它的作用是**判断两个对象的地址是不是相等**。即，判断两个对象是不是同一个对象。(基本数据类型`==`比较的是值，引用数据类型`==`比较的是内存地址)
+
+  - 基本类型：比较的是值是否相同；
+  - 引用类型：比较的是引用（地址）是否相同；
 - `equals()` : 它的作用也是判断两个对象是否相等。但它一般有两种使用情况：
   - 情况1：类没有覆盖 equals() 方法。则通过 equals() 比较该类的两个对象时，等价于通过`==`比较这两个对象。
   - 情况2：类覆盖了 equals() 方法。一般，我们都覆盖 equals() 方法来判断两个对象的内容相等；若它们的内容相等，则返回 true (即，认为这两个对象相等)。
@@ -693,7 +765,9 @@ public class TestVariable {
   - 说明：
     - String 中的 equals 方法是被重写过的，因为 object 的 equals 方法是比较的对象的内存地址，而 String 的 equals 方法比较的是对象的值。
     - 当创建 String 类型的对象时，虚拟机会在常量池中查找有没有已经存在的值和要创建的值相同的对象，如果有就把它赋给当前引用。如果没有就在常量池中重新创建一个 String 对象。
-- **字符串池（String Pool）*
+
+- **字符串池（String Pool）**
+
   - 1)`String s = "aaa";`（采用字面值方式赋值）
     - 1>首先查找 String Pool 中是否存在“aaa”这个对象，如果不存在，则在 String Pool 中创建 一个“aaa”对象，然后将 String Pool 中的这个“aaa”对象的地址返回来，赋给引用变量 s，这样 s 会指向 String Pool 中的这个“aaa”字符串对象
     - 2>如果存在，则不创建任何对象，直接将 String Pool 中的这个“aaa”对象地址返回来， 赋给 s 引用。
@@ -898,7 +972,7 @@ class Person{
 
   - 在上面这个例子中,当前输出结果为:hello world。这并没有什么问题，可能就是大家平常所理解的引用传递，那么当然会改变StringBuffer的内容。但是如果把上面的注释去掉，那么就会输出:hello.此时sb的值并没有变成ha hello. 假如说是引用传递的话，那么形参的s也就是sb的地址，此时在方法里new StringBuffer（），并将该对象赋给s，也就是说s现在指向了这个新创建的对象.按照引用传递的说法，此时对s的改变就是对sb的操作，也就是说sb应该也指向新创建的对象，那么输出的结果应该为ha world.但实际上输出的仅是hello.这说明sb指向的还是原来的对象，而形参s指向的才是创建的对象,这也就验证了java中的对象传递也是值传递。
 
-    <div align="enter"><img src="./img/008.png"/></div>
+    <div align="center"><img src="./img/008.png"/></div>
 
 - Java中其实还是值传递的，只不过对于对象参数，值的内容是对象的引用。
 - 无论是值传递还是引用传递，其实都是一种求值策略(Evaluation strategy)。
@@ -922,6 +996,13 @@ class Person{
   BufferedReader input = new BufferedReader(new InputStreamReader(System.in)); 
   String s = input.readLine(); 
   ```
+
+### 30.java 中 IO 流分为几种？
+- 按功能来分：输入流（input）、输出流（output）。
+- 按类型来分：字节流和字符流。
+- 字节流和字符流的区别是：
+	- 字节流按 8 位传输以字节为单位输入输出数据，
+	- 字符流按 16 位传输以字符为单位输入输出数据。
 
 
 ## 三、异常
@@ -1053,6 +1134,8 @@ class Person{
 ### 1.List、Set、Map三者的区别？
 
 <div align="center"><img src="./img/020.png"/></div>
+
+<div align="center"><img src="./img/022.png"/></div>
 
 - 类结构：
   - List和Set来自Collection接口
@@ -1842,8 +1925,9 @@ public interface Enumeration<E> {
   - 队列（Queue）JDK1.5：企业中经常使用消息队列，流量1000万，但是服务器只能处理10万请求，将请求存储在队列消息服务器中；先进先出（FIFO）（也不全是）；第一个抢购的人进来，第一个出去，和火车进隧道一样。activeMQ
   - 双端队列（Deque）JDK1.6：继承自Queue接口；可以先进先出（FIFO）也可以后进先出（LIFO）；**能够代替Stack**；
 
-
-
+### 21.Collection 和 Collections 有什么区别？
+-  java.util.Collection 是一个集合接口（集合类的一个顶级接口）。它提供了对集合对象进行基本操作的通用接口方法。Collection接口在Java 类库中有很多具体的实现。Collection接口的意义是为各种具体的集合提供了最大化的统一操作方式，其直接继承接口有List与Set。
+-  Collections则是集合类的一个工具类/帮助类，其中提供了一系列静态方法，用于对集合中元素进行排序、搜索以及线程安全等各种操作。
 
 ## 五、反射
 ### 1.private方法可以通过反射访问，那么private的意义是什么？
@@ -1913,6 +1997,10 @@ public interface Enumeration<E> {
 - volatile使变量在线程间可见，而synchronized是使多个线程间资源同步；
 - volatile修饰变量，而synchronized修饰方法或代码块。
 
+### 5.BIO、NIO、AIO 有什么区别？
+-     BIO：（Block IO） 同步阻塞式 IO，就是我们平常使用的传统 IO，它的特点是模式简单使用方便，**并发处理能力低**。
+-     NIO：（New IO） 同步非阻塞 IO，是传统 IO 的升级，客户端和服务器端通过 Channel（通道）通讯，**实现了多路复用**。
+-     AIO：（Asynchronous IO） 是 NIO 的升级，也叫 NIO2，实现了**异步非堵塞 IO** ，异步 IO 的操作基于事件和回调机制。
 
 
 
