@@ -445,6 +445,7 @@ public class MaxMinCommonDivisorMultiple {
 - 名字与类名相同；
 - 没有返回值，但不能用void声明构造函数；
 - 生成类的对象时自动执行，无需调用。
+- **构造方法不能用static、final、abstract修饰**。
 
 ### 9.一个类的构造方法的作用是什么 若一个类没有声明构造方法,该程序能正确执行吗 ?为什么?
 - 主要作用是完成对类对象的初始化工作。
@@ -2265,7 +2266,162 @@ public interface Enumeration<E> {
 
 
 
-## 八、代码分析
+## 八、内部类
+### 1.内部类的一些判断
+- 非静态内部类中不能声明任何static成员。
+  ```java
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 9:41
+   */
+  public class Test {
+      class InnerClass{
+  //		static int anInt;//Inner classes cannot have static declarations
+  //		//Inner classes cannot have static declarations
+  //		static void show(){ 
+  //            
+  //		}
+  //		//Inner classes cannot have static declarations
+  //		public static void main(String[] args) {
+  //            
+  //		}
+      }
+  }
+  ```
+
+- 外部类不能直接访问非静态内部类和静态内部类的内部成员。（但是可以通过类名访问静态内部类的静态成员）
+  ```java
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 9:57
+   */
+  public class Test2 {
+      public static void main(String[] args) {
+          Test2 test2 = new Test2();
+          test2.test();
+          /**
+           * staticInt=0
+           * anInt=0
+           * anStaticInt=0
+           */
+      }
+      public void test(){
+  //        //Cannot resolve symbol 'anInt'
+  //        System.out.println("anInt="+anInt);
+  //        //Cannot resolve symbol 'anStaticInt'
+  //        System.out.println("anStaticInt="+anStaticInt);
+  //        //Cannot resolve symbol 'anStaticInt'          
+  //          System.out.println("staticInt=" + staticInt);
+  //        //Non-static field 'anInt' cannot be referenced from a static context
+  //        System.out.println("anInt="+InnerClass.anInt);
+  //        //Non-static field 'anStaticInt' cannot be referenced from a static context
+  //          System.out.println("anStaticInt="+StaticInnerClass.anStaticInt);
+          System.out.println("staticInt="+StaticInnerClass.staticInt);
+          Test2.InnerClass innerClass = new Test2().new InnerClass();
+          Test2.StaticInnerClass staticInnerClass = new StaticInnerClass();
+          System.out.println("anInt="+innerClass.anInt);
+          System.out.println("anStaticInt="+staticInnerClass.anStaticInt);
+      }
+      class InnerClass{
+          int anInt = 0;
+      }
+      static class StaticInnerClass{
+          static int staticInt = 0;
+          int anStaticInt = 0;
+      }
+  }
+  ```
+
+- 非静态类可以直接访问外部类的所有成员，静态成员类只可直接访问外部类的静态成员。
+  ```java
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 10:11
+   */
+  public class Test3 {
+      public int anInt;
+      public static int anStaticInt;
+      public final int FINALINT = 10;
+      public static final int STATICFINALINT = 1;
+      public void fun1(){
+          System.out.println("fun1()");
+      }
+      public static void fun2(){
+          System.out.println("fun2()");
+      }
+      class InnerClass{
+          void show(){
+              System.out.println("anInt=" + anInt);
+              System.out.println("anStaticInt=" + anStaticInt);
+              System.out.println("FINALINT=" + FINALINT);
+              System.out.println("STATICFINALINT=" + STATICFINALINT);
+              fun1();
+              fun2();
+          }
+      }
+  
+      static class StaticInnerClass{
+          void show(){
+  //            //Non-static field 'anInt' cannot be referenced from a static context
+  //            System.out.println("anInt=" + anInt);
+              System.out.println("anStaticInt=" + anStaticInt);
+              //Non-static field 'FINALINT' cannot be referenced from a static context
+  //            System.out.println("FINALINT=" + FINALINT);
+              System.out.println("STATICFINALINT=" + STATICFINALINT);
+  //            //Non-static method 'fun1()' cannot be referenced from a static context
+  //            fun1();
+              fun2();
+          }
+      }
+  
+      public static void main(String[] args) {
+          Test3.InnerClass innerClass = new Test3().new InnerClass();
+          Test3.StaticInnerClass staticInnerClass = new StaticInnerClass();
+          innerClass.show();
+          System.out.println("==================");
+          staticInnerClass.show();
+          /**
+           * anInt=0
+           * anStaticInt=0
+           * FINALINT=10
+           * STATICFINALINT=1
+           * fun1()
+           * fun2()
+           * ==================
+           * anStaticInt=0
+           * STATICFINALINT=1
+           * fun2()
+           */
+      }
+  }
+  ```
+
+- 匿名内部类也就是没有名字的内部类
+	- 正因为没有名字，所以匿名内部类只能使用一次，它通常用来简化代码编写
+	- 但使用匿名内部类还有个前提条件：**必须继承一个父类或实现一个接口**
+
+  ```java
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 10:35
+   */
+  public class Test4 {
+      public static void main(String[] args) {
+          ITest test = new ITest() {
+              @Override
+              public void show() {
+                  System.out.println("show()");
+              }
+          };
+      }
+  }
+  
+  interface ITest{
+      void show();
+  }
+  ```
+
+## 九、代码分析
 
 ### 1.类加载顺序之代码解析
 
@@ -2457,7 +2613,41 @@ public interface Enumeration<E> {
   }
   ```
 
-
+### 2.null之强转
+- 调用普通方法：
+  ```java
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 9:31
+   */
+  public class Main {
+      public static void main(String[] args) {
+          ((Main)null).test();
+      }
+      public void test(){
+          System.out.println("test()");
+      }
+  }
+  /**
+   * Exception in thread "main" java.lang.NullPointerException
+   * at com.edu.test.Main.main(Main.java:7)
+   * /
+  ```
+- 调用static方法：
+  ```java
+  /**
+  * @Author: 王仁洪
+  * @Date: 2019/4/18 9:31
+  */
+  public class Main {
+      public static void main(String[] args) {
+          ((Main)null).test();//test()
+      }
+      public static void test(){
+          System.out.println("test()");
+      }
+  }
+  ```
 
 # 贰——设计模式
 
