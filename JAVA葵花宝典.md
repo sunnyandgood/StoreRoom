@@ -590,6 +590,13 @@ public class MaxMinCommonDivisorMultiple {
   Integer g = 128;
   Integer h = 128;
   System.out.println(g==h);//false
+  
+  Integer i = new Integer(129);
+  int j = 129;
+  Integer k = 129;
+  System.out.println(i==j);//true
+  System.out.println(i==k);//false
+  System.out.println(j==k);//true
   ```
 
 - 在java中，应该注意自动拆装箱，因为有时可能因为java自动装箱机制，而导致创建了许多对象，对于内存小的平台会造成压力。
@@ -646,7 +653,7 @@ public class TestVariable {
 ### 21-2.接口和抽象类的区别是什么？
 - **实现**：抽象类的子类使用 extends 来继承；接口必须使用 implements 来实现接口。
 - **构造函数**：抽象类可以有构造函数；接口不能有。
-- **main 方法**：抽象类可以有 main 方法，并且我们能运行它；接口不能有 main 方法。
+- **main 方法**：抽象类可以有 main 方法，并且我们能运行它；接口不能有 main 方法。//jdk1.8之前
 - **实现数量**：类可以实现很多个接口；但是只能继承一个抽象类。
 - **访问修饰符**：接口中的方法默认使用 public 修饰；抽象类中的方法可以是任意访问修饰符。
 - 接口的方法**默认是 public**，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），抽象类可以有非抽象的方法,抽象类的成员函数可以是 private，protected 或者是 public 。
@@ -2003,6 +2010,180 @@ public interface Enumeration<E> {
 -     NIO：（New IO） 同步非阻塞 IO，是传统 IO 的升级，客户端和服务器端通过 Channel（通道）通讯，**实现了多路复用**。
 -     AIO：（Asynchronous IO） 是 NIO 的升级，也叫 NIO2，实现了**异步非堵塞 IO** ，异步 IO 的操作基于事件和回调机制。
 
+### 6.多线程知道哪些常用类？
+- Thread类 //创建和控制线程，设置其优先级并获取其状态。
+- ThreadLocal类
+- ReentrantLock类
+
+### 7.ThreadLocal解析
+- ThreadLocal是什么？
+
+  - ThreadLocal是一个本地线程副本变量工具类。主要用于将私有线程和该线程存放的副本对象做一个映射，各个线程之间的变量互不干扰，在高并发场景下，可以实现无状态的调用，特别适用于各个线程依赖不通的变量值完成操作的场景。
+- ThreadLocal的内部结构图
+
+  ![ThreadLocal](./img/ThreadLocal.jpg)
+
+  - 从上面的结构图，我们已经窥见ThreadLocal的核心机制：
+    - 每个Thread线程内部都有一个Map。
+    - Map里面存储线程本地对象（key）和线程的变量副本（value）
+    - 但是，Thread内部的Map是由ThreadLocal维护的，由ThreadLocal负责向map获取和设置线程的变量值。
+  - 所以对于不同的线程，每次获取副本值时，别的线程并不能获取到当前线程的副本值，形成了副本的隔离，互不干扰。
+  - Thread线程内部的Map在类中描述如下：
+      ```java
+      public class Thread implements Runnable {
+        /* ThreadLocal values pertaining to this thread. 
+         * This map is maintained by the ThreadLocal class. 
+         * */
+        ThreadLocal.ThreadLocalMap threadLocals = null;
+      }
+      ```
+  - ThreadLocal类提供如下几个核心方法：
+    ```java
+    public T get()
+    public void set(T value)
+    public void remove()
+    ```
+    - get()方法用于获取当前线程的副本变量值。
+    	- 步骤：
+    		- 1.获取当前线程的ThreadLocalMap对象threadLocals
+    		- 2.从map中获取线程存储的K-V Entry节点。
+    		- 3.从Entry节点获取存储的Value副本值返回。
+    		- 4.map为空的话返回初始值null，即线程变量副本为null，在使用时需要注意判断NullPointerException。
+    - set()方法用于保存当前线程的副本变量值。
+    	- 步骤：
+    		- 1.获取当前线程的成员变量map
+    		- 2.map非空，则重新将ThreadLocal和新的value副本放入到map中。
+    		- 3.map空，则对线程的成员变量ThreadLocalMap进行初始化创建，并将ThreadLocal和value副本放入map中。
+    - initialValue()为当前线程初始副本变量值。
+    - remove()方法移除当前前程的副本变量值。
+- ThreadLocalMap是ThreadLocal的内部类，没有实现Map接口，用独立的方式实现了Map的功能，其内部的Entry也独立实现。
+
+  ![ThreadLocalMap](./img/ThreadLocalMap.png)
+
+  ```java
+  static class Entry extends WeakReference<ThreadLocal> {
+      /** The value associated with this ThreadLocal. */
+      Object value;
+  
+      Entry(ThreadLocal k, Object v) {
+          super(k);
+          value = v;
+      }
+  }
+  ```
+  - Entry继承自WeakReference（弱引用，生命周期只能存活到下次GC前），但只有Key是弱引用类型的，Value并非弱引用。
+  - 在ThreadLocalMap中，也是用Entry来保存K-V结构数据的。但是Entry中key只能是ThreadLocal对象，这点被Entry的构造方法已经限定死了。
+
+- Hash冲突怎么解决
+  - 和HashMap的最大的不同在于，ThreadLocalMap结构非常简单，没有next引用，也就是说ThreadLocalMap中解决Hash冲突的方式并非链表的方式，而是采用线性探测的方式，所谓线性探测，就是根据初始key的hashcode值确定元素在table数组中的位置，如果发现这个位置上已经有其他key值的元素被占用，则利用固定的算法寻找一定步长的下个位置，依次判断，直至找到能够存放的位置。
+  - **ThreadLocalMap解决Hash冲突的方式就是简单的步长加1或减1，寻找下一个相邻的位置**。
+  - 显然ThreadLocalMap采用线性探测的方式解决Hash冲突的效率很低，如果有大量不同的ThreadLocal对象放入map中时发送冲突，或者发生二次冲突，则效率很低。
+  - **所以这里引出的良好建议是：每个线程只存一个变量，这样的话所有的线程存放到map中的Key都是相同的ThreadLocal，如果一个线程要保存多个变量，就需要创建多个ThreadLocal，多个ThreadLocal放入Map中时会极大的增加Hash冲突的可能。**
+- **应用场景**（还记得Hibernate的session获取场景吗？）
+
+  - 为什么？每个线程访问数据库都应当是一个独立的Session会话，如果多个线程共享同一个Session会话，有可能其他线程关闭连接了，当前线程再执行提交时就会出现会话已关闭的异常，导致系统异常。此方式能避免线程争抢Session，提高并发下的安全性。
+  - 使用ThreadLocal的典型场景正如上面的**数据库连接管理**，**线程会话管理**等场景，只适用于独立变量副本的情况，如果变量为全局共享的，则不适用在高并发下使用。
+- **总结**
+
+  - 每个ThreadLocal只能保存一个变量副本，如果想要上线一个线程能够保存多个副本以上，就需要创建多个ThreadLocal。
+  - ThreadLocal内部的ThreadLocalMap键为弱引用，会有内存泄漏的风险。
+  - 适用于无状态，副本变量独立后不影响业务逻辑的高并发场景。如果如果业务逻辑强依赖于副本变量，则不适合用ThreadLocal解决，需要另寻解决方案。
+    
+### 8.Semaphore原理
+- 信号量Semaphore的介绍
+  - 在信号量上我们定义两种操作： acquire（获取） 和 release（释放）。当一个线程调用acquire操作时，它要么通过成功获取信号量（信号量减1），要么一直等下去，直到有线程释放信号量，或超时。release（释放）实际上会将信号量的值加1，然后唤醒等待的线程。
+  - 信号量主要用于两个目的，一个是用于多个共享资源的互斥使用，另一个用于并发线程数的控制。 
+- 信号量Semaphore的源码分析
+  - 在Java的并发包中，Semaphore类表示信号量。Semaphore内部主要通过AQS（Abstract  Queued  Synchronizer）实现线程的管理。
+  - Semaphore有两个构造函数，参数permits表示许可数，它最后传递给了AQS的state值。线程在运行时首先获取许可，如果成功，许可数就减1，线程运行，当线程运行结束就释放许可，许可数就加1。如果许可数为0，则获取失败，线程位于AQS的等待队列中，它会被其它释放许可的线程唤醒。
+  - 在创建Semaphore对象的时候还可以指定它的公平性。一般常用非公平的信号量，非公平信号量是指在获取许可时先尝试获取许可，而不必关心是否已有需要获取许可的线程位于等待队列中，如果获取失败，才会入列。而公平的信号量在获取许可时首先要查看等待队列中是否已有线程，如果有则入列。 
+
+### 9.ReentrantLock原理
+- 在Java中通常实现锁有两种方式，一种是synchronized关键字，另一种是Lock。二者其实并没有什么必然联系，但是各有各的特点，在使用中可以进行取舍的使用。首先我们先对比下两者。
+	- 实现：
+		- synchronized是基于JVM层面实现的，
+		- 而Lock是基于JDK层面实现的。
+	- 使用:
+		- Lock是比较复杂的，需要lock和unlock，如果忘记释放锁就会产生死锁的问题，所以，通常需要在finally中进行锁的释放。
+		- 但是synchronized的使用十分简单，只需要对自己的方法或者关注的同步对象或类使用synchronized关键字即可。但是对于锁的粒度控制比较粗，同时对于实现一些锁的状态的转移比较困难。
+	- 特点：
+		-  Lock支持锁获取超和获取锁响应中断
+		-  synchronized不支持锁获取超和获取锁响应中断
+- 在JDK1.5之后synchronized引入了偏向锁，轻量级锁和重量级锁，从而大大的提高了synchronized的性能。
+- Lock的实现主要有ReentrantLock、ReadLock和WriteLock。
+- ReentrantLock解析
+	- 首先ReentrantLock是可序列化的，其次是ReentrantLock里有一个对AbstractQueuedSynchronizer的引用。
+	- ReentrantLock支持两种锁模式，公平锁和非公平锁。默认的实现是非公平的。
+	- AbstractQueuedSynchronizer 是一个抽象类，所以在使用这个同步器的时候，需要通过自己实现预期的逻辑，Sync、FairSync和NonfairSync都是ReentrantLock为了实现自己的需求而实现的内部类，之所以做成内部类，我认为是只在ReentrantLock使用上述几个类，在外部没有使用到。
+
+### 10.多线程常用的几个方法汇总
+
+- 1）sleep()
+
+  - sleep()方法属于Thread类，主要的作用是让当前线程停止执行，把cpu让给其他线程执行，但不会释放对象锁和监控的状态，到了指定时间后线程又会自动恢复运行状态
+  - 注意：线程睡眠到期自动苏醒，并返回到可运行状态，不是运行状态。sleep()中指定的时间是线程不会运行的最短时间。因此，sleep()方法不能保证该线程睡眠到期后就开始执行
+  - Thread.sleep()方法是一个静态方法
+  - Java有两种sleep方法,一个只有一个毫秒参数,另一个有毫秒和纳秒
+    ```java
+    sleep(long millis)
+    sleep(long millis, int nanos)
+    ```
+- 2）wait() notify()
+
+  - wait()属于Object类，与sleep()的区别是当前线程会释放锁，进入等待此对象的等待锁定池。比方说，线程A调用Obj.wait(),线程A就会停止运行，而转为等待状态。至于等待多长时间? 那就看其他线程是否调用Obj.notify().其优势显而易见，成为多个线程之间进行通讯的有手段！
+  - 注意：它必须包含在Synchronzied语句中，无论是wait()还是notify()都需要首先获得目标的对象的一个监视器
+  - 先来解释一下 "Synchronzied" 
+  	- 是一种同步锁。作用是实现线程间同步，对同步的代码加锁，使得每一次，只能有一线程进入同步块，从而保证线程间的安全性
+  	- 它修饰的对象有以下几种：
+  		- 修饰一个代码块，被修饰的代码块称为同步语句块，其作用的范围是大括号{}括起来的部分,进入同步代码前要获得给定对象的锁
+  		- 修饰一个实例方法，进入同步代码前要获得当前实例的锁
+  		- 修饰一个静态方法，进入同步代码前要获得当前类的锁
+- 3）join()
+
+  - 在某些情况下，子线程需要进行大量的耗时运算，主线程可能会在子线程执行结束之前结束，但是如果主线程又需要用到子线程的结果，换句话说，就是主线程需要在子线程执行之后再结束。这就需要用到join()方法
+- 4）yield()
+	- 中文意思：放弃，屈服
+	- 一个线程调用yield()意味着告诉虚拟机自己非常乐于助人，可以把自己的位置让给其他线程(这只是暗示，并不表绝对)。但得注意，让出cpu并不代表当前线程不执行了。当前线程让出cpu后，还会进行cpu资源的争夺，但是能不能再次分配到，就不一定了。
+
+### 11.为什么要使用线程池？
+- 1.为什么要使用线程池    
+  - 在java中，如果每个请求到达就创建一个新线程，开销是相当大的。在实际使用中，服务器在创建和销毁线程上花费的时间和消耗的系统资源都相当大，甚至可能要比在处理实际的用户请求的时间和资源要多的多。除了创建和销毁线程的开销之外，活动的线程也需要消耗系统资源。如果在一个jvm里创建太多的线程，可能会使系统由于过度消耗内存或“切换过度”而导致系统资源不足。
+  - 为了防止资源不足，服务器应用程序需要采取一些办法来限制任何给定时刻处理的请求数目，尽可能减少创建和销毁线程的次数，特别是一些资源耗费比较大的线程的创建和销毁，尽量利用已有对象来进行服务，这就是“**池化资源**”技术产生的原因。    
+  - **线程池主要用来解决线程生命周期开销问题和资源不足问题**。通过对多个任务重复使用线程，线程创建的开销就被分摊到了多个任务上了，而且由于在请求到达时线程已经存在，所以消除了线程创建所带来的延迟。这样，就可以立即为请求服务，使用应用程序响应更快。另外，通过适当的调整线程中的线程数目可以防止出现资源不足的情况。
+- 2.线程池的组成部分
+  - 一个比较简单的线程池至少应包含线程池管理器、工作线程、任务列队、任务接口等部分。其中线程池管理器的作用是创建、销毁并管理线程池，将工作线程放入线程池中；
+  - 工作线程是一个可以循环执行任务的线程，在没有任务时进行等待；任务列队的作用是提供一种缓冲机制，将没有处理的任务放在任务列队中；任务接口是每个任务必须实现的接口，主要用来规定任务的入口、任务执行完后的收尾工作、任务的执行状态等，工作线程通过该接口调度任务的执行。
+  - 线程池管理器至少有下列功能：创建线程池，销毁线程池，添加新任务。
+  - 工作线程是一个可以循环执行任务的线程，在没有任务时将等待。
+  - 任务接口是为所有任务提供统一的接口，以便工作线程处理。任务接口主要规定了任务的入口，任务执行完后的收尾工作，任务的执行状态等。
+- 3.线程池适合应用的场合
+  - 当一个服务器接受到大量短小线程的请求时，使用线程池技术是非常合适的，它可以大大减少线程的创建和销毁次数，提高服务器的工作效率。但是线程要求的运动时间比较长，即线程的运行时间比
+
+### 12.为什么使用多线程？
+-  耗时的操作使用线程，提高应用程序响应
+-  并行操作时使用线程，如C/S架构的服务器端并发线程响应用户的请求。
+-  多CPU系统中，使用线程提高CPU利用率
+-  改善程序结构。一个既长又复杂的进程可以考虑分为多个线程，成为几个独立或半独立的运行部分，这样的程序会利于理解和修改。
+
+### 13.设计多少的线程数合适？
+- 一般来说，非CPU密集型的业务（加解密、压缩解压缩、搜索排序等业务是CPU密集型的业务），瓶颈都在后端数据库，本地CPU计算的时间很少，所以设置几十或者几百个工作线程也都是可能的。
+- N核服务器，通过执行业务的单线程分析出本地计算时间为x，等待时间为y，则工作线程数（线程池线程数）**设置为 `N*(x+y)/x`，能让CPU的利用率最大化**。
+
+### 14.线程安全是什么？
+- java中的线程安全是什么：
+  - 就是线程同步的意思，就是当一个程序对一个线程安全的方法或者语句进行访问的时候，其他的不能再对他进行操作了，必须等到这次访问结束以后才能对这个线程安全的方法进行访问。
+- 什么叫线程安全：
+  - 如果你的代码所在的进程中有多个线程在同时运行，而这些线程可能会同时运行这段代码。如果每次运行结果和单线程运行的结果是一样的，而且其他的变量的值也和预期的是一样的，就是线程安全的。 
+  - 或者说:一个类或者程序所提供的接口对于线程来说是原子操作或者多个线程之间的切换不会导致该接口的执行结果存在二义性,也就是说我们不用考虑同步的问题。
+- 线程安全问题都是由全局变量及静态变量引起的。
+  - 若每个线程中对全局变量、静态变量只有读操作，而无写操作，一般来说，这个全局变量是线程安全的；若有多个线程同时执行写操作，一般都需要考虑线程同步，否则就可能影响线程安全。
+- 存在竞争的线程不安全，不存在竞争的线程就是安全的
+
+### 15.线程安全用什么？(如何保证线程安全)
+- 互斥同步
+- 非阻塞同步 
+- 原子类操作
+
 
 
 ## 七、JAVA虚拟机
@@ -2667,10 +2848,163 @@ public interface Enumeration<E> {
 
 
 # 肆——框架
+### 1.@Autowired和@Resource的区别？
+- 1） @Autowired与@Resource都可以用来装配bean. 都可以写在字段上,或写在setter方法上。
+- 2） @Autowired默认按类型装配（这个注解是属业spring的），默认情况下必须要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false，如：`@Autowired(required=false)` ，如果我们想使用名称装配可以结合@Qualifier注解进行使用，如下：
+  ```java
+  @Autowired()@Qualifier("baseDao")
+  private BaseDao baseDao;
+  ```
+- 3）@Resource（这个注解属于J2EE的），默认按照名称进行装配，名称可以通过name属性进行指定，如果没有指定name属性，当注解写在字段上时，默认取字段名进行安装名称查找，如果注解写在setter方法上默认取属性名进行装配。当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。
 
+  ```java
+  @Resource(name="baseDao")
+  private BaseDao baseDao;
+  ```
+- 推荐使用：@Resource注解在字段上，这样就不用写setter方法了，并且这个注解是属于J2EE的，减少了与spring的耦合。这样代码看起就比较优雅。
 
+### 2.spring的注解？
 
+- **@Autowired**、**@Qualifier（指定注入Bean的名称）**、**@Resource**、**@Service**、**@Component**、**@Controller**、**@ Repository**
+- @Configuration把一个类作为一个IoC容器，它的某个方法头上如果注册了@Bean，就会作为这个Spring容器中的Bean。
+- @Repository用于标注数据访问组件，即DAO组件。
+- @Service用于标注业务层组件、 
+- @Controller用于标注控制层组件（如struts中的action）
+- @Component泛指组件，当组件不好归类的时候，我们可以使用这个注解进行标注。
+- @Autowired 默认按类型装配，如果我们想使用按名称装配，可以结合@Qualifier注解一起使用。如下：
+- @Autowired @Qualifier("personDaoBean") 存在多个实例配合使用
+- @Resource默认按名称装配，当找不到与名称匹配的bean才会按类型装配。
+- @Scope注解 作用域
+- @Lazy(true) 表示延迟初始化
+- @Scope用于指定scope作用域的（用在类上）
+- @PostConstruct用于指定初始化方法（用在方法上）
+- @PreDestory用于指定销毁方法（用在方法上）
+- @DependsOn：定义Bean初始化及销毁时的顺序
+- @Primary：自动装配时当出现多个Bean候选者时，被注解为@Primary的Bean将作为首选者，否则将抛出异常
+- @PostConstruct 初始化注解
+- @PreDestroy 摧毁注解 默认 单例  启动就加载
+- @Async异步方法调用
 
+### 3.注解
+- Spring部分
+	- 1.声明bean的注解
+		- @Component 组件，没有明确的角色
+		- @Service 在业务逻辑层使用（service层）
+		- @Repository 在数据访问层使用（dao层）
+		- @Controller 在展现层使用，控制器的声明（C）
+	- 2.注入bean的注解
+		- @Autowired：由Spring提供
+		- @Inject：由JSR-330提供
+		- @Resource：由JSR-250提供
+		- 都可以注解在set方法和属性上，推荐注解在属性上（一目了然，少写代码）。
+	- 3.java配置类相关注解
+		- @Configuration 声明当前类为配置类，相当于xml形式的Spring配置（类上）
+		- @Bean 注解在方法上，声明当前方法的返回值为一个bean，替代xml中的方式（方法上）
+		- @Configuration 声明当前类为配置类，其中内部组合了@Component注解，表明这个类是一个bean（类上）
+		- @ComponentScan 用于对Component进行扫描，相当于xml中的（类上）
+		- @WishlyConfiguration 为@Configuration与@ComponentScan的组合注解，可以替代这两个注解
+	- 4.切面（AOP）相关注解
+		- Spring支持AspectJ的注解式切面编程。
+		- @Aspect 声明一个切面（类上） 
+		- 使用@After、@Before、@Around定义建言（advice），可直接将拦截规则（切点）作为参数。
+		- @After 在方法执行之后执行（方法上） 
+		- @Before 在方法执行之前执行（方法上） 
+		- @Around 在方法执行之前与之后执行（方法上）
+		- @PointCut 声明切点 
+		- 在java配置类中使用@EnableAspectJAutoProxy注解开启Spring对AspectJ代理的支持（类上）
+	- 5.@Bean的属性支持
+		- @Scope 设置Spring容器如何新建Bean实例（方法上，得有@Bean）其设置类型包括：
+		  ```java
+		  Singleton （单例,一个Spring容器中只有一个bean实例，默认模式）, 
+		  Protetype （每次调用新建一个bean）, 
+		  Request （web项目中，给每个http request新建一个bean）, 
+		  Session （web项目中，给每个http session新建一个bean）, 
+		  GlobalSession（给每一个 global http session新建一个Bean实例）
+		  ```
+		- @StepScope 在Spring Batch中还有涉及
+		- @PostConstruct 由JSR-250提供，在构造函数执行完之后执行，等价于xml配置文件中bean的initMethod
+		- @PreDestory 由JSR-250提供，在Bean销毁之前执行，等价于xml配置文件中bean的destroyMethod
+	- 6.@Value注解
+		- @Value 为属性注入值（属性上） 支持如下方式的注入： 
+			- 注入普通字符
+			  ```java
+			  @Value("Michael Jackson")
+			  String name;
+			  ```
+			- 注入操作系统属性
+			  ```java
+			  @Value("#{systemProperties['os.name']}")
+			  String osName;
+			  ```
+			- 注入表达式结果
+			  ```java
+			  @Value("#{ T(java.lang.Math).random() * 100 }") 
+			  String randomNumber;
+			  ```
+			- 注入其它bean属性
+			  ```java
+			  @Value("#{domeClass.name}")
+			  String name;
+			  ```
+			- 注入文件资源
+			  ```java
+			  @Value("classpath:com/hgs/hello/test.txt")
+			  String Resource file;
+			  ```
+			- 注入网站资源
+			  ```java@Value("http://www.cznovel.com") 
+			  Resource url;
+			  ```
+			- 注入配置文件
+			  ```java
+			  @Value("${book.name}")
+			  String bookName;
+			  ```
+			- 注入配置使用方法： 
+			  ```java
+			  ① 编写配置文件（test.properties）
+			  book.name=《三体》
+			  
+			  ② @PropertySource 加载配置文件(类上)
+			  @PropertySource("classpath:com/hgs/hello/test/test.propertie")
+			  
+			  ③ 还需配置一个PropertySourcesPlaceholderConfigurer的bean。
+			  ```
+
+	- 7.环境切换
+		- @Profile 通过设定Environment的ActiveProfiles来设定当前context需要使用的配置环境。（类或方法上）
+		- @Conditional Spring4中可以使用此注解定义条件话的bean，通过实现Condition接口，并重写matches方法，从而决定该bean是否被实例化。（方法上）
+	- 8.异步相关
+		- @EnableAsync 配置类中，通过此注解开启对异步任务的支持，叙事性AsyncConfigurer接口（类上）
+		- @Async 在实际执行的bean方法使用该注解来申明其是一个异步任务（方法上或类上所有的方法都将异步，需要@EnableAsync开启异步任务）
+	- 9.定时任务相关
+		- @EnableScheduling 在配置类上使用，开启计划任务的支持（类上）
+		- @Scheduled 来申明这是一个任务，包括cron,fixDelay,fixRate等类型（方法上，需先开启计划任务的支持）
+	- 10.@Enable*注解说明(这些注解主要用来开启对xxx的支持。) 
+		- @EnableAspectJAutoProxy 开启对AspectJ自动代理的支持
+		- @EnableAsync 开启异步方法的支持
+		- @EnableScheduling 开启计划任务的支持
+		- @EnableWebMvc 开启Web MVC的配置支持
+		- @EnableConfigurationProperties 开启对@ConfigurationProperties注解配置Bean的支持
+		- @EnableJpaRepositories 开启对SpringData JPA Repository的支持
+		- @EnableTransactionManagement 开启注解式事务的支持
+		- @EnableTransactionManagement 开启注解式事务的支持
+		- @EnableCaching 开启注解式的缓存支持
+
+- SpringMVC部分
+	- @EnableWebMvc 在配置类中开启Web MVC的配置支持，如一些ViewResolver或者MessageConverter等，若无此句，重写WebMvcConfigurerAdapter方法（用于对SpringMVC的配置）。
+	- @Controller 声明该类为SpringMVC中的Controller
+	- @RequestMapping 用于映射Web请求，包括访问路径和参数（类或方法上）
+	- @ResponseBody 支持将返回值放在response内，而不是一个页面，通常用户返回json数据（返回值旁或方法上）
+	- @RequestBody 允许request的参数在request体中，而不是在直接连接在地址后面。（放在参数前）
+	- @PathVariable 用于接收路径参数，比如@RequestMapping(“/hello/{name}”)申明的路径，将注解放在参数中前，即可获取该值，通常作为Restful的接口实现方法。
+	- @RestController 该注解为一个组合注解，相当于@Controller和@ResponseBody的组合，注解在类上，意味着，该Controller的所有方法都默认加上了@ResponseBody。
+	- @ControllerAdvice 通过该注解，我们可以将对于控制器的全局配置放置在同一个位置，注解了@Controller的类的方法可使用@ExceptionHandler、@InitBinder、@ModelAttribute注解到方法上， 这对所有注解了
+	- @RequestMapping的控制器内的方法有效。
+	- @ExceptionHandler 用于全局处理控制器里的异常
+	- @InitBinder 用来设置WebDataBinder，WebDataBinder用来自动绑定前台请求参数到Model中。
+	- @ModelAttribute 本来的作用是绑定键值对到Model里，在@ControllerAdvice中是让全局的
+	- @RequestMapping都能获得在此处设置的键值对。
 
 # 伍——数据库
 
