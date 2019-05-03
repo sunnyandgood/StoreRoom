@@ -101,26 +101,155 @@
 		* 看起来似乎没什么问题，但如果你仔细想一下，就会发现有问题，就是初始条件，三个线程按照A，B，C的顺序来启动，按照前面的思考，A唤醒B，B唤醒C，C再唤醒A。但是这种假设依赖于JVM中线程调度、执行的顺序，所以需要手动控制他们三个的启动顺序，即Thread.Sleep(100)。
 
 
-* <h3>方法二：通过一个ReentrantLock和三个conditon实现(推荐，安全性，性能和可读性较高)</h3>
+- <h3>方法二：通过一个ReentrantLock和三个conditon实现(推荐，安全性，性能和可读性较高)（java多线程编程核心技术P234页）</h3>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  ```java
+  import java.util.concurrent.locks.Condition;
+  import java.util.concurrent.locks.ReentrantLock;
+  
+  /**
+   * @Author: 王仁洪
+   * @Date: 2019/4/18 9:26
+   */
+  public class ThreadPrintABC {
+      volatile private static char nextPrintWho = 'A';
+      private static ReentrantLock lock = new ReentrantLock();
+      final private static Condition CONDITIONA = lock.newCondition();
+      final private static Condition CONDITIONB = lock.newCondition();
+      final private static Condition CONDITIONC = lock.newCondition();
+      public static void main(String[] args) {
+          Thread threadA = new Thread(){
+              @Override
+              public void run() {
+                  try {
+                      lock.lock();
+                      while (nextPrintWho != 'A'){
+                          CONDITIONA.await();
+                      }
+                      System.out.print("A");
+                      nextPrintWho = 'B';
+                      CONDITIONB.signalAll();
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }finally {
+                      lock.unlock();
+                  }
+              }
+          };
+  
+          Thread threadB = new Thread(){
+              @Override
+              public void run() {
+                  try {
+                      lock.lock();
+                      while (nextPrintWho != 'B'){
+                          CONDITIONB.await();
+                      }
+                      System.out.print("B");
+                      nextPrintWho = 'C';
+                      CONDITIONC.signalAll();
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }finally {
+                      lock.unlock();
+                  }
+              }
+          };
+  
+          Thread threadC = new Thread(){
+              @Override
+              public void run() {
+                  try {
+                      lock.lock();
+                      while (nextPrintWho != 'C'){
+                          CONDITIONC.await();
+                      }
+                      System.out.print("C");
+                      nextPrintWho = 'A';
+                      CONDITIONA.signalAll();
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }finally {
+                      lock.unlock();
+                  }
+              }
+          };
+  
+          threadA.start();
+          threadB.start();
+          threadC.start();
+          //ABC
+  
+  //        Thread[] a = new Thread[5];
+  //        Thread[] b = new Thread[5];
+  //        Thread[] c = new Thread[5];
+  //        for (int i=0;i<5;i++){
+  //            a[i] = new Thread(threadA);
+  //            b[i] = new Thread(threadB);
+  //            c[i] = new Thread(threadC);
+  //            a[i].start();
+  //            b[i].start();
+  //            c[i].start();
+  //        }
+      }
+  }
+  ```
+- <h3>方法三：（java多线程编程核心技术P292页）</h3>
+  ```java
+  /**
+   * @Author: sunnyandgood
+   * @Date: 2019/4/21 19:14
+   */
+  public class Mythread extends Thread {
+      private Object lock;
+      private String showChar;
+      private int showNumPosition;
+      private int printCount = 0;//统计打印了几个字母
+      volatile private static int addNumber = 1;
+  
+      public Mythread(Object lock,String showChar,int showNumPosition){
+          super();
+          this.lock = lock;
+          this.showChar = showChar;
+          this.showNumPosition = showNumPosition;
+      }
+  
+      @Override
+      public void run() {
+          try {
+              synchronized (lock){
+                  while (true){
+                      if (addNumber % 4 == showNumPosition){
+                          //System.out.println("ThreadName=" + Thread.currentThread().getName() +
+                           //       " runCount=" + addNumber + " " + showChar);
+                          System.out.print(showChar);
+                          lock.notifyAll();
+                          addNumber++;
+                          printCount++;
+                          if (printCount == 1){
+                              break;
+                          }
+                      }else {
+                          lock.wait();
+                      }
+                  }
+              }
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+      }
+  
+      public static void main(String[] args) {
+          Object lock = new Object();
+          Mythread a = new Mythread(lock,"A",1);
+          Mythread b = new Mythread(lock,"B",2);
+          Mythread c = new Mythread(lock,"C",3);
+          Mythread d = new Mythread(lock,"D",0);
+          a.start();
+          b.start();
+          c.start();
+          d.start();
+          //ABCD
+      }
+  }
+  ```
