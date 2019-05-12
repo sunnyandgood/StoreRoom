@@ -118,10 +118,16 @@ static final int ALTERNATIVE_HASHING_THRESHOLD_DEFAULT = Integer.MAX_VALUE;
     - 否则，返回空。
 - 4、扩容操作：原数组长度的一倍(`2 * table.length`)
   - 若数组长度已经达到HashMap的最大容量MAXIMUM_CAPACITY (1 << 30)
-  	- 则将HashMap的threshold置为Integer.MAX_VALUE;
-  - 否则，创建一个长度为原数组1倍的新数组
+    - 则将HashMap的threshold置为Integer.MAX_VALUE;
+  - 否则，创建一个长度为原数组1倍的新数组：`Entry[] newTable = new Entry[newCapacity]`
+    - 遍历HashMap的table数组
+      - 遍历数组上边的链表
+      - 判断是否需要重新计算hash值，若需要则重新计算；若不需要则用之前的hash值；用hash值计算出在数组中的位置（计算公式：`hash & (table.length-1)`，用hash值与数组长度取模）
+      - 将节点插入到新数组对应链表的头节点，并将其余节点向下移动，让新插入的节点位于数组索引位置上。
+    - 将新数组赋值给HashMap的table属性
+    - 将`Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1)`赋值给HashMap的threshold属性
 
-- 1）为什么要二次方数？——便于用&运算，算位置
+- 1）为什么要二次方数？——便于用&运算，计算位置
 
 - 2）什么要右移和异或？——将高位参与到运算中来，使元素分布均匀
 
