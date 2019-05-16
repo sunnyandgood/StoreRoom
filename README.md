@@ -16,7 +16,7 @@
 * [1、两数之和](./leetcode/0001、两数之和.md)
 * [2、两数相加](./leetcode/0002、两数相加.md)
 * [3、无重复字符的最长子串](./leetcode/0003、无重复字符的最长子串.md)
-* [LeetCode-Java](./leetcode/LeetCode-Java)
+* [LeetCode-Java](./leetcode/LeetCode-Java/src)
   * [3.无重复字符的最长子串](./leetcode/LeetCode-Java/src/leet_code_00003)
   * [173. 二叉搜索树迭代器](./leetcode/LeetCode-Java/src/leet_code_00173)
   * [206. 反转链表](./leetcode/LeetCode-Java/src/leet_code_00206)
