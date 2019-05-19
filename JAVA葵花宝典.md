@@ -2904,7 +2904,11 @@ public interface Enumeration<E> {
   ```
 - 推荐使用：@Resource注解在字段上，这样就不用写setter方法了，并且这个注解是属于J2EE的，减少了与spring的耦合。这样代码看起就比较优雅。
 
-### 2.spring的注解？
+### 2.mybatis的#和$的区别
+- `#`是在解析后会加引号（`''`），默认会加?占位符可以避免sql注入；而`$`不会加引号
+- 
+
+### 3.spring的注解？
 
 - **@Autowired**、**@Qualifier（指定注入Bean的名称）**、**@Resource**、**@Service**、**@Component**、**@Controller**、**@ Repository**
 - @Configuration把一个类作为一个IoC容器，它的某个方法头上如果注册了@Bean，就会作为这个Spring容器中的Bean。
@@ -2926,7 +2930,7 @@ public interface Enumeration<E> {
 - @PreDestroy 摧毁注解 默认 单例  启动就加载
 - @Async异步方法调用
 
-### 3.注解
+### 4.注解
 - Spring部分
 	- 1.声明bean的注解
 		- @Component 组件，没有明确的角色
@@ -3046,6 +3050,9 @@ public interface Enumeration<E> {
 	- @InitBinder 用来设置WebDataBinder，WebDataBinder用来自动绑定前台请求参数到Model中。
 	- @ModelAttribute 本来的作用是绑定键值对到Model里，在@ControllerAdvice中是让全局的
 	- @RequestMapping都能获得在此处设置的键值对。
+
+
+
 
 # 伍——数据库
 
