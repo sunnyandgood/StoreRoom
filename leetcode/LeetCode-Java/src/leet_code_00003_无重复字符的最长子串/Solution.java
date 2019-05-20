@@ -1,9 +1,9 @@
-package leet_code_00003;
+package leet_code_00003_无重复字符的最长子串;
 
 /**
  * @Author: sunnyandgood
  * @Date: 2019/5/11 1:35
- * 无重复字符的最长子串
+ * 3、无重复字符的最长子串
  */
 public class Solution {
     public static int lengthOfLongestSubstring(String s) {
