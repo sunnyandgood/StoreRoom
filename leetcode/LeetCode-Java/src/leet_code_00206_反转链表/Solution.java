@@ -1,4 +1,4 @@
-package leet_code_00206;
+package leet_code_00206_反转链表;
 
 /**
  * @Author: sunnyandgood
