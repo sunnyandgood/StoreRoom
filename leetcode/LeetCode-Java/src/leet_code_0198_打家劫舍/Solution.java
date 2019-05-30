@@ -1,4 +1,4 @@
-package leet_code_0198._打家劫舍;
+package leet_code_0198_打家劫舍;
 
 /**
  * @Author: sunnyandgood
