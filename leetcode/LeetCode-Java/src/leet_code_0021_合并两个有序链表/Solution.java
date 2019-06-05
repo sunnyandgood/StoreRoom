@@ -46,7 +46,6 @@ class ListNode {
     ListNode(int x) {
         val = x;
     }
-
     /**
      * 链表构造函数，将 arr 转成链表，当前节点即为链表头节点
      *
