@@ -1,4 +1,4 @@
-package sort;
+package sort.sort1_directInsertionSort;
 
 import java.util.Arrays;
 

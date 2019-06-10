@@ -1,4 +1,4 @@
-package sort;
+package sort.sort2_shellSort;
 
 import java.util.Arrays;
 
@@ -13,23 +13,18 @@ import java.util.Arrays;
  */
 public class ShellSort {
     public int[] shellSort(int[] arr){
-        int length = arr.length;
-        while (length != 0){
-            length = length / 2;
-            for (int i=0;i<length;i++){//分的组数
-                //组中的元素，从第二个数开始
-                for (int j=i+length;j<arr.length;j+=length){
-                    int k = j - length;//k为有序序列最后一位的位数
-                    int temp = arr[j];
-                    for (;k>=0 && temp<arr[k];k-=length){
-                        arr[k+length] = arr[k];//向后移动length位
-                    }
-                    arr[k+length] = temp;
-
-                    System.out.println(Arrays.toString(arr));
+        int j;
+        for (int gap=arr.length/2;gap>0;gap/=2){
+            for (int i=gap;i<arr.length;i++){
+                int temp = arr[i];
+                for (j=i;j>=gap && temp<arr[j-gap];j-=gap){
+                    arr[j] = arr[j-gap];
                 }
+                arr[j] = temp;
+                System.out.println(Arrays.toString(arr));
             }
         }
+
         return arr;
     }
 
