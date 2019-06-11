@@ -21,6 +21,7 @@ public class ShellSort {
                     arr[j] = arr[j-gap];
                 }
                 arr[j] = temp;
+
                 System.out.println(Arrays.toString(arr));
             }
         }
