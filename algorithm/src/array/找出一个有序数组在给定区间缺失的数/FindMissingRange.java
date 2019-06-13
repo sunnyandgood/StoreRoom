@@ -21,6 +21,11 @@ public class FindMissingRange {
         int i = 1;
         while (i < arr.length){
             int cur = arr[i];
+            if (cur != pre + 1){
+                addToList(res,pre + 1,cur - 1);
+            }
+            pre = cur;
+            i++;
         }
         //最后处理upper之前的范围
         addToList(res,arr[arr.length-1] + 1,upper);
@@ -36,7 +41,11 @@ public class FindMissingRange {
     }
 
     public static void main(String[] args) {
-
+        FindMissingRange range = new FindMissingRange();
+        int[] arr = {0,1,3,50,75};
+        int lower = 0;
+        int upper = 99;
+        System.out.println(range.findMissingRange(arr,lower,upper));
     }
 }
 /**
