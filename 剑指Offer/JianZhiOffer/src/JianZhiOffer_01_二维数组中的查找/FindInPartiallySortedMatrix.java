@@ -16,7 +16,8 @@ package JianZhiOffer_01_二维数组中的查找;
  * 也就是说如果要查找的数字不在数组的右上角，则每一次都在数组的查找范围中剔除一行或者一列，
  * 这样每一步都可以缩小查找的范围，直到找到要查找的数字，或者查找范围为空。
  */
-public class Solution {
+public class FindInPartiallySortedMatrix {
+
     /**
      * 从右上角开始找
      * 如果该数字大于要查找的数字，剔除这个数字所在的列（列值减一）；
@@ -71,6 +72,6 @@ public class Solution {
                          {2, 4, 9, 12},
                          {4, 7, 10, 13},
                          {6, 8, 11, 15}};
-        System.out.println(new Solution().Find(7, array));
+        System.out.println(new FindInPartiallySortedMatrix().Find(7, array));
     }
 }
