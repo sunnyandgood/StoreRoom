@@ -11,7 +11,7 @@ import java.util.Stack;
  * 用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。
  * 解题思路：
  * 入队：将值压入stack1
- * 出兑：先判断stack2是否为空，若不为空则直接弹出；若为空则先将stack1中的值压入stack2再弹出
+ * 出队：先判断stack2是否为空，若不为空则直接弹出；若为空则先将stack1中的值压入stack2再弹出
  */
 public class QueueWithTwoStacks {
     Stack<Integer> stack1 = new Stack<Integer>();
