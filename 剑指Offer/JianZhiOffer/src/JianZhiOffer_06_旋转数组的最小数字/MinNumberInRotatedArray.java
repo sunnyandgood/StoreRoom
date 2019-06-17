@@ -47,9 +47,9 @@ public class MinNumberInRotatedArray {
                 break;
             }
             int mid = left + (right - left) / 2;
-            if (array[mid] >= array[left]){
+            if (array[mid] > array[left]){
                 left = mid;
-            }else if (array[mid] <= array[right]){
+            }else if (array[mid] < array[right]){
                 right = mid;
             }else {//如果left、right和mid指向的三个数字相等，则只能顺序查找
                 for (int i=0;i<array.length;i++){
@@ -66,5 +66,8 @@ public class MinNumberInRotatedArray {
     public static void main(String[] args) {
         MinNumberInRotatedArray array = new MinNumberInRotatedArray();
         System.out.println(array.minNumberInRotateArray(new int[]{3,4,5,1,2}));
+        System.out.println(array.minNumberInRotateArray(new int[]{1,2,3,4,5}));
+        System.out.println(array.minNumberInRotateArray(new int[]{1,0,1,1,1}));
+        System.out.println(array.minNumberInRotateArray(new int[]{1,1,1,0,1}));
     }
 }
