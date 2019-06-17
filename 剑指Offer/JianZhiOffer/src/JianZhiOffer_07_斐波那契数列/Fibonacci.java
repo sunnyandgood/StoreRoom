@@ -13,7 +13,7 @@ package JianZhiOffer_07_斐波那契数列;
 public class Fibonacci {
     //从前往后循环实现
     public int fibonacci(int n) {
-        int res;
+        int res = 0;
         if (n < 2){
             return n;
         }
@@ -24,7 +24,7 @@ public class Fibonacci {
             pre = cur;
             cur = res;
         }
-        return cur;
+        return res;
     }
     //递归实现
     public int fibonacci1(int n) {
@@ -35,6 +35,22 @@ public class Fibonacci {
             return 1;
         }
         return fibonacci1(n-1) + fibonacci1(n-2);
+    }
+    //不借助第三个变量
+    public int fibonacci2(int n) {
+        if (n < 2){
+            return n;
+        }
+        int pre = 0;
+        int cur = 1;
+        for (int i=2;i<=n;i++){
+            pre = pre + cur;//计算出最新的值
+            pre = pre + cur;//为两数交换做准备
+            cur = pre - cur;//cur得到最新值
+            pre = pre - cur;//将cur之前的值赋给pre
+
+        }
+        return cur;
     }
 
     public static void main(String[] args) {
