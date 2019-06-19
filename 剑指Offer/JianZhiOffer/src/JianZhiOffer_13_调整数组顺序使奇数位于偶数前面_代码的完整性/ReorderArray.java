@@ -58,9 +58,44 @@ public class ReorderArray {
         }
     }
     public static void main(String[] args) {
-        ReorderArray reorderArray = new ReorderArray();
+//        ReorderArray reorderArray = new ReorderArray();
         int[] arr = new int[]{1,2,8,3,4,5,6,7,10,12,9};
-        reorderArray.reOrderArray1(arr);
+//        reorderArray.reOrderArray1(arr);
+//        System.out.println(Arrays.toString(arr));
+
+        ReorderArrayUnordered unordered = new ReorderArrayUnordered();
+        unordered.reOrderArray(arr);
         System.out.println(Arrays.toString(arr));
+    }
+}
+
+/**
+ * 不并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+ */
+class ReorderArrayUnordered{
+    public void reOrderArray(int [] array) {
+        int length = array.length;
+        if (array == null || length == 0){
+            return;
+        }
+        int left = 0;
+        int right = length - 1;
+        while (left < right){
+            while (left < right && !isEven(array[left])){
+                left++;
+            }
+            while (left < right && isEven(array[right])){
+                right--;
+            }
+            if (left < right){
+                int temp = array[left];
+                array[left] = array[right];
+                array[right] = temp;
+            }
+        }
+    }
+
+    public boolean isEven(int num){
+        return ((num & 1) == 0);
     }
 }
