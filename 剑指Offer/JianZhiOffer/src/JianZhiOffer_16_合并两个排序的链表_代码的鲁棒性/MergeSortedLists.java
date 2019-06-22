@@ -18,6 +18,7 @@ package JianZhiOffer_16_合并两个排序的链表_代码的鲁棒性;
  * 这就是典型的递归的过程，我们可以定义递归函数完成这一合并过程。
  */
 public class MergeSortedLists {
+    //递归实现
     public ListNode Merge(ListNode list1,ListNode list2) {
         if (list1 == null){
             return list2;
@@ -35,6 +36,29 @@ public class MergeSortedLists {
         }
         return head;
     }
+    //非递归实现
+    public ListNode Merge1(ListNode list1,ListNode list2) {
+        ListNode head = new ListNode(0);
+        ListNode curNode = head;
+        while (list1 != null && list2 != null){
+            if (list1.val < list2.val){
+                curNode.next = list1;
+                curNode = list1;
+                list1 = list1.next;
+            }else {
+                curNode.next = list2;
+                curNode = list2;
+                list2 = list2.next;
+            }
+        }
+        if (list1 == null){
+            curNode.next = list2;
+        }
+        if (list2 == null){
+            curNode.next = list1;
+        }
+        return head.next;
+    }
 
     public static void main(String[] args) {
         ListNode listNode = new ListNode();
@@ -42,7 +66,7 @@ public class MergeSortedLists {
         int[] arr2 = new int[]{2,4,6,8};
         ListNode listNode1 = listNode.create(arr1);
         ListNode listNode2 = listNode.create(arr2);
-        listNode = new MergeSortedLists().Merge(listNode1, listNode2);
+        listNode = new MergeSortedLists().Merge1(listNode1, listNode2);
         while (listNode != null){
             System.out.println(listNode.val);
             listNode = listNode.next;
