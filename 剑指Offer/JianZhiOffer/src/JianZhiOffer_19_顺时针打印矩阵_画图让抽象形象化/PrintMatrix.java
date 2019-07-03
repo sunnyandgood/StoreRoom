@@ -20,8 +20,50 @@ import java.util.ArrayList;
  *
  */
 public class PrintMatrix {
+    /**public ArrayList<Integer> printMatrix_1(int [][] matrix) {
+        if (matrix == null || matrix.length == 0){
+            return null;
+        }
+        ArrayList resultList = new ArrayList();
+        int start = 0;
+        int rows = matrix.length;
+        int columns = matrix[0].length;
+        while (columns > (start * 2) && rows > (start * 2)){
+            printMatrixInCircle(matrix,start,resultList);
+            start++;
+        }
+        return resultList;
+    }
+
+    void printMatrixInCircle(int[][] matrix,int start,ArrayList resultList){
+        int endY = matrix.length - 1 - start;
+        int endX = matrix[0].length - 1 - start;
+        //从左到右打印一行
+        for (int y = start;y < endX;y++){
+            resultList.add(matrix[start][y]);
+        }
+        //从上到下打印一列
+        if (start < endY){
+            for (int x = start + 1;x <= endY;x++){
+                resultList.add(matrix[x][endX]);
+            }
+        }
+        //从右到左打印一行
+        if (start <endX && start < endY){
+            for (int y = endX - 1;y >= start;y--){
+                resultList.add(matrix[endY][y]);
+            }
+        }
+        //从下到上打印一列
+        if (start < endX && start < endY - 1){
+            for (int x = endY - 1;x > start + 1;x--){
+                resultList.add(matrix[x][start]);
+            }
+        }
+    }*/
+
     public ArrayList<Integer> printMatrix(int [][] matrix) {
-        if (matrix == null && matrix.length == 0){
+        if (matrix == null || matrix.length == 0){
             return null;
         }
         ArrayList resultList = new ArrayList();
