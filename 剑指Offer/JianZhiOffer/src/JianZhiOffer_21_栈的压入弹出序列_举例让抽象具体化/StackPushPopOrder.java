@@ -1,5 +1,6 @@
 package JianZhiOffer_21_栈的压入弹出序列_举例让抽象具体化;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -39,7 +40,30 @@ public class StackPushPopOrder {
             stack.pop();
             popInex++;
         }
+        return res;
+    }
 
+    public boolean IsPopOrder1(int [] pushA,int [] popA) {
+        if (pushA == null || pushA.length == 0 || popA == null || popA.length == 0){
+            return false;
+        }
+        boolean res = true;
+        ArrayList<Integer> list = new ArrayList<>();
+        int pushInex = 0;
+        int popInex = 0;
+        list.add(pushA[pushInex++]);
+        while (popInex < popA.length){
+            while (list.get(list.size()-1) != popA[popInex]){
+                if (pushInex < pushA.length){
+                    list.add(pushA[pushInex++]);
+                }else {
+                    res = false;
+                    break;
+                }
+            }
+            list.remove(list.size()-1);
+            popInex++;
+        }
         return res;
     }
 
@@ -48,7 +72,7 @@ public class StackPushPopOrder {
         int[] push = new int[]{1,2,3,4,5};
         int[] pop1 = new int[]{4,5,3,2,1};
         int[] pop2 = new int[]{4,3,5,1,2};
-        System.out.println(order.IsPopOrder(push,pop1));
-        System.out.println(order.IsPopOrder(push,pop2));
+        System.out.println(order.IsPopOrder1(push,pop1));
+        System.out.println(order.IsPopOrder1(push,pop2));
     }
 }
