@@ -42,4 +42,31 @@ class TreeNode {
     public TreeNode(int val) {
         this.val = val;
     }
+
+    @Override
+    public String toString() {
+        //先序遍历
+        StringBuffer buffer = new StringBuffer("");
+        buffer.append(val);
+        if (this.left != null){
+            buffer.append(this.left);
+        }
+        if (this.right != null){
+            buffer.append(this.right);
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * 先序非递归创建
+     */
+    public void createTree(Integer[] treeNodes) {
+        TreeNode root = new TreeNode(treeNodes[0]);
+        for (int i = 1;i < treeNodes.length;i++){
+            if (!treeNodes[i].equals("#")){
+
+            }
+        }
+
+    }
 }
