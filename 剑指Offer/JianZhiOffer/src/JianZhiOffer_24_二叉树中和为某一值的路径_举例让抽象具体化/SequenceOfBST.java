@@ -28,8 +28,9 @@ public class SequenceOfBST {
         return resList;
     }
     public void path(TreeNode root,int target,ArrayList<ArrayList<Integer>> resList, ArrayList<Integer> stack,int sum){
-        if(root==null)
-            return ;
+        if(root == null){
+            return;
+        }
         sum+=root.val;
         if(root.left==null&&root.right==null){
             if(sum==target) {
@@ -52,6 +53,5 @@ class TreeNode {
 
     public TreeNode(int val) {
         this.val = val;
-
     }
 }
