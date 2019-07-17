@@ -27,21 +27,21 @@ public class SequenceOfBST {
         path(root,target,resList,stack,sum);
         return resList;
     }
-    public void path(TreeNode root,int target,ArrayList<ArrayList<Integer>> arr, ArrayList<Integer> stack,int sum){
+    public void path(TreeNode root,int target,ArrayList<ArrayList<Integer>> resList, ArrayList<Integer> stack,int sum){
         if(root==null)
             return ;
         sum+=root.val;
         if(root.left==null&&root.right==null){
             if(sum==target) {
                 stack.add(root.val);
-                arr.add(new ArrayList<>(stack));
+                resList.add(new ArrayList<>(stack));
                 stack.remove(stack.size()-1);
             }
             return;
         }
         stack.add(root.val);
-        path(root.left,target,arr,stack,sum);
-        path(root.right,target,arr,stack,sum);
+        path(root.left,target,resList,stack,sum);
+        path(root.right,target,resList,stack,sum);
         stack.remove(stack.size()-1);
     }
 }
