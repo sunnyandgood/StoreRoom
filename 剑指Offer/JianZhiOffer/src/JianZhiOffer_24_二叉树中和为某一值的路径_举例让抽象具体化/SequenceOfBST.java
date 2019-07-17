@@ -31,19 +31,19 @@ public class SequenceOfBST {
         if(root == null){
             return;
         }
-        sum+=root.val;
-        if(root.left==null&&root.right==null){
-            if(sum==target) {
+        sum += root.val;
+        if(root.left == null && root.right == null){
+            if(sum == target) {
                 stack.add(root.val);
                 resList.add(new ArrayList<>(stack));
-                stack.remove(stack.size()-1);
+                stack.remove(stack.size() - 1);
             }
             return;
         }
         stack.add(root.val);
         path(root.left,target,resList,stack,sum);
         path(root.right,target,resList,stack,sum);
-        stack.remove(stack.size()-1);
+        stack.remove(stack.size() - 1);
     }
 }
 class TreeNode {
