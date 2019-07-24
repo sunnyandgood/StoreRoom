@@ -1,5 +1,7 @@
 package JianZhiOffer_26_二叉搜索树与双向链表_分解让复杂问题简单;
 
+import java.util.Stack;
+
 /**
  * @Author: sunnyandgood
  * @Date: 2019/7/22 23:05
@@ -60,6 +62,34 @@ public class ConvertBinarySearchTree {
             right.left=root;
         }
         return  left!=null?left:root;
+    }
+
+
+    public TreeNode Convert1(TreeNode pRootOfTree) {
+        if(pRootOfTree == null){
+            return null;
+        }
+        TreeNode node = pRootOfTree;
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        Connection(node,stack);
+
+        node = stack.get(0);
+        return node;
+    }
+    private void Connection(TreeNode newNode,Stack<TreeNode> stack){
+        if(newNode == null) {
+            return;
+        }
+        Connection(newNode.left,stack);
+        if(stack.isEmpty()){
+            stack.push(newNode);
+        }
+        else{
+            stack.peek().right = newNode;
+            newNode.left = stack.peek();
+            stack.push(newNode);
+        }
+        Connection(newNode.right,stack);
     }
 }
 class TreeNode {
