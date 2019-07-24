@@ -10,38 +10,38 @@ import java.util.Stack;
  * 输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。
  */
 public class ConvertBinarySearchTree {
-    /**public TreeNode Convert(TreeNode pRootOfTree) {
-        if (pRootOfTree == null){
-            return null;
-        }
-        TreeNode pLastNodeInList = null;
-        convertNode(pRootOfTree,pLastNodeInList);
-        //pLastNodeInList指向双向链表
-        //需要返回头结点
-//        TreeNode pHeadOfList = pLastNodeInList;
-        while (pLastNodeInList != null && pLastNodeInList.left != null){
-            pLastNodeInList = pLastNodeInList.left;
-        }
-        return pLastNodeInList;
-    }
-
-    private void convertNode(TreeNode pNode,TreeNode pLastNoeInList){
-        if (pNode == null){
-            return;
-        }
-        TreeNode pCurrent = pNode;
-        if (pCurrent.left != null){
-            convertNode(pCurrent.left,pLastNoeInList);
-        }
-        pCurrent.left = pLastNoeInList;
-        if (pLastNoeInList != null){
-            pLastNoeInList.right = pCurrent;
-        }
-        pLastNoeInList = pCurrent;
-        if (pCurrent.right != null){
-            convertNode(pCurrent.right,pLastNoeInList);
-        }
-    }*/
+//    public TreeNode Convert(TreeNode pRootOfTree) {
+//        if (pRootOfTree == null){
+//            return null;
+//        }
+//        TreeNode pLastNodeInList = null;
+//        convertNode(pRootOfTree,pLastNodeInList);
+//        //pLastNodeInList指向双向链表
+//        //需要返回头结点
+////        TreeNode pHeadOfList = pLastNodeInList;
+//        while (pLastNodeInList != null && pLastNodeInList.left != null){
+//            pLastNodeInList = pLastNodeInList.left;
+//        }
+//        return pLastNodeInList;
+//    }
+//
+//    private void convertNode(TreeNode pNode,TreeNode pLastNoeInList){
+//        if (pNode == null){
+//            return;
+//        }
+//        TreeNode pCurrent = pNode;
+//        if (pCurrent.left != null){
+//            convertNode(pCurrent.left,pLastNoeInList);
+//        }
+//        pCurrent.left = pLastNoeInList;
+//        if (pLastNoeInList != null){
+//            pLastNoeInList.right = pCurrent;
+//        }
+//        pLastNoeInList = pCurrent;
+//        if (pCurrent.right != null){
+//            convertNode(pCurrent.right,pLastNoeInList);
+//        }
+//    }
     public TreeNode Convert(TreeNode root) {
         if(root == null)
             return null;
@@ -91,6 +91,33 @@ public class ConvertBinarySearchTree {
         }
         Connection(newNode.right,stack);
     }
+
+
+//    public TreeNode covert2(TreeNode pRootOfTree) {
+//        TreeNode lastNodeList = null;
+//        lastNodeList = convertNode(pRootOfTree,lastNodeList);
+//        while (lastNodeList != null && lastNodeList.left != null) {
+//            lastNodeList = lastNodeList.left;
+//        }
+//        return lastNodeList;
+//    }
+//    private TreeNode convertNode(TreeNode root,TreeNode lastNodeList) {
+//        if(root == null)
+//            return null;
+//        TreeNode current = root;
+//        if(current.right != null){
+//            lastNodeList = convertNode(current.right, lastNodeList);
+//        }
+//        current.left = lastNodeList;
+//        if(lastNodeList != null){
+//            lastNodeList.right = current;
+//        }
+//        lastNodeList = current;
+//        if(current.right != null){
+//            lastNodeList = convertNode(current.right, lastNodeList);
+//        }
+//        return lastNodeList;
+//    }
 }
 class TreeNode {
     int val = 0;
