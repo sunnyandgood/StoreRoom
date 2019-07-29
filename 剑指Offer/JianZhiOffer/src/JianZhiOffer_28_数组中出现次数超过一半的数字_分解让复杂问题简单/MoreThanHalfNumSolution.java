@@ -1,5 +1,8 @@
 package JianZhiOffer_28_数组中出现次数超过一半的数字_分解让复杂问题简单;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author: sunnyandgood
  * @Date: 2019/7/29 23:03
@@ -10,6 +13,17 @@ package JianZhiOffer_28_数组中出现次数超过一半的数字_分解让复�
  */
 public class MoreThanHalfNumSolution {
     public int MoreThanHalfNum_Solution(int [] array) {
-
+        if (array == null || array.length == 0){
+            return 0;
+        }
+        Map<Integer,Integer> map = new HashMap<>();
+        for (int val : array){
+            Integer time = map.getOrDefault(val, 0) + 1;
+            if (time > array.length / 2){
+                return val;
+            }
+            map.put(val,time);
+        }
+        return 0;
     }
 }
