@@ -1,4 +1,4 @@
-package JianZhiOffer_28_数组中出现次数超过一半的数字_分解让复杂问题简单;
+package JianZhiOffer_28_数组中出现次数超过一半的数字_时间效率;
 
 import java.util.HashMap;
 import java.util.Map;
