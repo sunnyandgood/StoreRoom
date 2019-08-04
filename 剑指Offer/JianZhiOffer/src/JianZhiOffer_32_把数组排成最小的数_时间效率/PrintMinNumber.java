@@ -15,7 +15,7 @@ import java.util.Comparator;
 public class PrintMinNumber {
     public String PrintMinNumber(int [] numbers) {
         String s = "";
-        ArrayList<Integer> list=new ArrayList<Integer>();
+        ArrayList<Integer> list = new ArrayList<Integer>();
         for(int i = 0;i < numbers.length;i++){
             list.add(numbers[i]);//将数组放入arrayList中
         }
