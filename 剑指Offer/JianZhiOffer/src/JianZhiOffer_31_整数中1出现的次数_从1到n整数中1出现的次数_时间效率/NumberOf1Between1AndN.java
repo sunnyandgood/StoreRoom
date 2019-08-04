@@ -23,4 +23,52 @@ public class NumberOf1Between1AndN {
         }
         return count;
     }
+
+//    public int NumberOf1Between1AndN(int n) {
+//        if (n <= 0){
+//            return 0;
+//        }
+//        char[] chars = String.valueOf(n).toCharArray();
+//        return numberOf1(chars,0);
+//    }
+//    private int numberOf1(char[] chars,int index){
+//        if (chars == null || chars.length == 0 || chars[index] < '0' || chars[index] > '9' || index > chars.length - 1){
+//            return 0;
+//        }
+//        int first = chars[index] - '0';
+//        int length = chars.length - (index + 1);
+//        if (length == 1 && first == 0){
+//            return 0;
+//        }
+//        if (length == 1 && first > 0){
+//            return 1;
+//        }
+//        int numFirstDigit = 0;
+//        if (first > 1){
+//            numFirstDigit = powerBase10(length - 1);
+//        }else if (first == 1 && index < chars.length - 1){
+//            numFirstDigit = Integer.parseInt(String.valueOf(chars[index + 1])) + 1;
+//        }
+//        int numOtherDigits = first * (length - 1) * powerBase10(length - 2);
+//        int numRecursive = 0;
+//        if (index < chars.length - 1){
+//            numberOf1(chars,index + 1);
+//        }
+//        return numFirstDigit + numOtherDigits + numRecursive;
+//    }
+//    private int powerBase10(int num){
+//        int result = 1;
+//        for (int i = 0;i < num;i++){
+//            result *= 10;
+//        }
+//        return result;
+//    }
+
+    public static void main(String[] args) {
+        NumberOf1Between1AndN number = new NumberOf1Between1AndN();
+//        System.out.println(number.NumberOf1Between1AndN(1));
+//        System.out.println(Integer.parseInt(String.valueOf('1')));
+//        char[] chars = String.valueOf(22).toCharArray();
+//        System.out.println(Arrays.toString(chars));
+    }
 }
