@@ -36,14 +36,14 @@ public class InversePairs {
         if(low == high) {
             return 0;
         }
-        int mid = (low+high)>>1;
+        int mid = ((high - low) >> 1) + low;
         int leftCount = InversePairsCore(array,copy,low,mid)%1000000007;
-        int rightCount = InversePairsCore(array,copy,mid+1,high)%1000000007;
+        int rightCount = InversePairsCore(array,copy,mid + 1,high)%1000000007;
         int count = 0;
         int i = mid;
         int j = high;
         int locCopy = high;
-        while(i >= low&&j>mid) {
+        while(i >= low && j > mid) {
             if(array[i] > array[j]) {
                 count += (j - mid);
                 copy[locCopy--] = array[i--];
@@ -55,14 +55,14 @@ public class InversePairs {
             }
         }
         for(;i >= low;i--) {
-            copy[locCopy--]=array[i];
+            copy[locCopy--] = array[i];
         }
         for(;j > mid;j--) {
-            copy[locCopy--]=array[j];
+            copy[locCopy--] = array[j];
         }
         for(int s = low;s <= high;s++) {
             array[s] = copy[s];
         }
-        return (leftCount+rightCount+count)%1000000007;
+        return (leftCount + rightCount + count)%1000000007;
     }
 }
