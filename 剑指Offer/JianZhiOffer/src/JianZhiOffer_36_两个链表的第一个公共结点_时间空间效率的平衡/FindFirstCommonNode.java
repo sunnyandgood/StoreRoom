@@ -68,18 +68,18 @@ public class FindFirstCommonNode {
         LinkedList<ListNode> stack1 = new LinkedList<>();
         LinkedList<ListNode> stack2 = new LinkedList<>();
         while (pHead1 != null){
-            stack1.add(pHead1);
-            pHead1 = pHead2.next;
+            stack1.push(pHead1);
+            pHead1 = pHead1.next;
         }
         while (pHead2 != null){
-            stack2.add(pHead2);
-            pHead2 = pHead1.next;
+            stack2.push(pHead2);
+            pHead2 = pHead2.next;
         }
         ListNode firstCommonNode = null;
         while (stack1.size() != 0 && stack2.size() != 0){
             ListNode node1 = stack1.pop();
             ListNode node2 = stack2.pop();
-            if (node1 != node2){
+            if (node1.val != node2.val){
                 break;
             }
             firstCommonNode = node1;
@@ -88,12 +88,13 @@ public class FindFirstCommonNode {
     }
 
     public static void main(String[] args) {
+        System.out.println("==============");
         ListNode listNode = new ListNode();
         ListNode listNode1 = listNode.create(new int[]{1, 2, 3, 6, 7});
         ListNode listNode2 = listNode.create(new int[]{4, 5, 6, 7});
         FindFirstCommonNode find = new FindFirstCommonNode();
         ListNode node = find.FindFirstCommonNode_1(listNode1, listNode2);
-        System.out.println(node);
+        System.out.println(node.val);
     }
 }
 class ListNode {
