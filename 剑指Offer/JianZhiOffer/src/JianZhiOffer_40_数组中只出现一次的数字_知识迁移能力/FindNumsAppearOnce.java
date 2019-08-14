@@ -24,5 +24,6 @@ public class FindNumsAppearOnce {
         set.toArray(res);
         num1[0] = res[0];
         num2[0] = res[1];
+
     }
 }
