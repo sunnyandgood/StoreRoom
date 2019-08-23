@@ -1,5 +1,7 @@
 package JianZhiOffer_44_翻转单词顺序列_知识迁移能力;
 
+import com.sun.deploy.util.StringUtils;
+
 import java.util.Arrays;
 
 /**
@@ -28,8 +30,13 @@ public class ReverseSentence {
             words[start++] = words[end];
             words[end--] = temp;
         }
-        return Arrays.stream(words)
-                .reduce((str1, str2) -> str1 + " " + str2)
-                .get();
+        return StringUtils.join(Arrays.asList(words)," ");
+//        return Arrays.stream(words)
+//                .reduce((str1, str2) -> str1 + " " + str2)
+//                .get();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new ReverseSentence().ReverseSentence("I am a student."));
     }
 }
