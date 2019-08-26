@@ -24,4 +24,9 @@ public class LastRemaining {
         }
         return last;
     }
+
+    public static void main(String[] args) {
+        LastRemaining remaining = new LastRemaining();
+        remaining.LastRemaining_Solution(5,3);
+    }
 }
