@@ -25,6 +25,35 @@ public class LastRemaining {
         return last;
     }
 
+//    public int LastRemaining_Solution_1(int n, int m) {
+//        if (n < 1 || m < 1){
+//            return -1;
+//        }
+//        LinkedList<Integer> list = new LinkedList<>();
+//        for (int i = 1;i <= n;i++){
+//            list.add(i);
+//        }
+//        int cur = 0;
+//        while (list.size() > 1){
+//            for (int i = 0;i < m;i++){
+//                cur++;
+//                if ((list.get(cur)).equals(list.get(list.size() - 1))){
+//                    cur = 0;
+//                }
+//            }
+//            int next = cur + 1;
+//            if ((list.get(next)).equals(list.get(list.size() - 1))){
+//                next = 0;
+//            }
+//            cur--;
+//            if (cur > -1){
+//                list.remove(cur);
+//            }
+//            cur = next;
+//        }
+//        return list.get(cur);
+//    }
+
     public static void main(String[] args) {
         LastRemaining remaining = new LastRemaining();
         remaining.LastRemaining_Solution(5,3);
