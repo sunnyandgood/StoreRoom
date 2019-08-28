@@ -38,3 +38,32 @@ public class Sum_Solution {
         return sum.get();
     }
 }
+
+//class Solution {
+//    private static int num = 0;
+//    private static int sum = 0;
+//    public Solution(){
+//        ++num;
+//        sum += num;
+//    }
+//
+//    private static void reset(){
+//        num = 0;
+//        sum = 0;
+//    }
+//
+//    private static int getSum(){
+//        return sum;
+//    }
+//
+//    public int Sum_Solution(int n) {
+//        Solution.reset();
+//        Solution[] solution = new Solution[n];
+//        return Solution.getSum();
+//    }
+//
+//    public static void main(String[] args) {
+//        Solution solution = new Solution();
+//        System.out.println(solution.Sum_Solution(2));
+//    }
+//}
